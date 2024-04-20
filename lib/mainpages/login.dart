@@ -22,12 +22,12 @@ class _LoginState extends State<Login> {
 
   Widget build(BuildContext context) {
   return Scaffold(
-    backgroundColor: Color(0xFFFFC8D2),
+    backgroundColor: const Color(0xFFFFC8D2),
 
     //Creating an  Appbar with the BackArrow button to 'WELCOME'
     appBar: AppBar(
-      backgroundColor: Color(0xFFFFC8D2),
-      leading: BackArrow(widget: Welcome()),
+      backgroundColor: const Color(0xFFFFC8D2),
+      leading: const BackArrow(widget: Welcome()),
       elevation: 0.5,
     ),
     
@@ -62,7 +62,7 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                     // Text with font color
-                    Text(
+                    const Text(
                       'LOGIN',
                       style: TextStyle(
                         fontFamily: 'OtomanopeeOne',
@@ -75,69 +75,65 @@ class _LoginState extends State<Login> {
               ],
             ),
         
-            SizedBox(height: 20.0,),
+            const SizedBox(height: 20.0,),
         
             //UI for taking email as input
-            Container(
-              child: Row(
-                children: [
-                  //Heading of 'EMAIL'
-                  Text(
-                    'Email:',
-                    style: TextStyle(
-                      color: Color(0xFF716562),
-                      fontSize: 25,
-                      fontFamily: 'OverlockSC',
-                      fontWeight: FontWeight.w400,
+            Row(
+              children: [
+                //Heading of 'EMAIL'
+                const Text(
+                  'Email:',
+                  style: TextStyle(
+                    color: Color(0xFF716562),
+                    fontSize: 25,
+                    fontFamily: 'OverlockSC',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                const SizedBox(width: 55.0),
+                //Field for entering Email
+                Expanded(
+                  child: TextField(
+                    controller: _emailController,
+                    decoration: const InputDecoration(
+                      fillColor: Colors.white,
+                      filled: true,
+                      labelText: 'email@gmail.com',
                     ),
                   ),
-                  SizedBox(width: 55.0),
-                  //Field for entering Email
-                  Expanded(
-                    child: TextField(
-                      controller: _emailController,
-                      decoration: const InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        labelText: 'email@gmail.com',
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
         
             const SizedBox(height: 20.0),
         
             //UI for taking password as input
-            Container( 
-              child: Row(
-                children: [
-                  //Heading of 'PASSWORD'
-                  Text(
-                    'Password:',
-                    style: TextStyle(
-                      color: Color(0xFF716562),
-                      fontSize: 25,
-                      fontFamily: 'OverlockSC',
-                      fontWeight: FontWeight.w400,
-                    ),
+            Row(
+              children: [
+                //Heading of 'PASSWORD'
+                const Text(
+                  'Password:',
+                  style: TextStyle(
+                    color: Color(0xFF716562),
+                    fontSize: 25,
+                    fontFamily: 'OverlockSC',
+                    fontWeight: FontWeight.w400,
                   ),
-                  SizedBox(width: 5.0),
-                  //Field for entering Password
-                  Expanded(
-                    child: TextField(
-                      controller: _passwordController,
-                      decoration: const InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        labelText: '####',
-                      ),
-                      obscureText: true,
+                ),
+                const SizedBox(width: 5.0),
+                //Field for entering Password
+                Expanded(
+                  child: TextField(
+                    controller: _passwordController,
+                    decoration: const InputDecoration(
+                      fillColor: Colors.white,
+                      filled: true,
+                      labelText: '####',
                     ),
+                    obscureText: true,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
         
             const SizedBox(height: 20.0),
@@ -147,10 +143,17 @@ class _LoginState extends State<Login> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Home()),
+                  MaterialPageRoute(builder: (context) => const  Home()),
                 );
               },
-              child: Text(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF716562),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text(
                 'Login',
                 style: TextStyle(
                   color: Color(0xFF716562),
@@ -159,19 +162,12 @@ class _LoginState extends State<Login> {
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Color(0xFF716562),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
             ),
         
             const SizedBox(height: 15.0),
         
             //UI for 'OR' text
-            Text(
+            const Text(
               'or',
               style: TextStyle(
                 color: Color(0xFF716562),
@@ -193,7 +189,7 @@ class _LoginState extends State<Login> {
                 width: 35.0,
                 height: 35.0,
               ),
-              label: Text(
+              label: const Text(
                 'Continue with Google',
                 style: TextStyle(
                   color: Color(0xFF716562),
@@ -204,7 +200,7 @@ class _LoginState extends State<Login> {
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
-                foregroundColor: Color(0xFF716562),
+                foregroundColor: const Color(0xFF716562),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

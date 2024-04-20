@@ -12,7 +12,7 @@ class BackArrow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  IconButton(
-      icon: Icon(Icons.arrow_back,
+      icon: const Icon(Icons.arrow_back,
       color: Color(0xFF726662)),
       //Navigate to previous page when the button is pressed.
         onPressed: () {

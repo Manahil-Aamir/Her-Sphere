@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hersphere/familypages/birthdays.dart';
+import 'package:hersphere/familypages/photos.dart';
+import 'package:hersphere/familypages/sos.dart';
 import 'package:hersphere/mainpages/home.dart';
 import '../impwidgets/backarrow.dart';
 import '../impwidgets/button.dart';
@@ -21,19 +24,19 @@ class _FamilyState extends State<Family> {
       appBar: AppBar(
         backgroundColor: Color(0xFFF9CFFD),
         elevation: 0.5,
-        leading: BackArrow(widget: Home()),
-        actions: <Widget>[
+        leading: const BackArrow(widget: Home()),
+        actions: const <Widget>[
           Logout(),
         ],
       ),
 
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(12.0, 10.0, 12.0, 4.0),
+          padding: const EdgeInsets.fromLTRB(12.0, 10.0, 12.0, 4.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 23.0),
+              const SizedBox(height: 23.0),
 
               // Inserting an image on the top-left corner
               Expanded(
@@ -44,7 +47,7 @@ class _FamilyState extends State<Family> {
                     child: Container(
                       width: 200.0,
                       height: 150.0,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage('assets/images/family1.png'),
                           fit: BoxFit.cover,
@@ -73,7 +76,7 @@ class _FamilyState extends State<Family> {
                     ),
                   ),
                   // Text with font color
-                  Text(
+                  const Text(
                     'FAMILY',
                     style: TextStyle(
                       fontFamily: 'OtomanopeeOne',
@@ -84,20 +87,20 @@ class _FamilyState extends State<Family> {
                 ],
               ),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Displaying a 'BIRTHDAYS' option Button
-              OptionButton(text: 'BIRTHDAYS', widget: Home()),
+              const OptionButton(text: 'BIRTHDAYS', widget: Birthdays()),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Displaying a 'PHOTOS' option Button
-              OptionButton(text: 'PHOTOS', widget: Home()),
+              const OptionButton(text: 'PHOTOS', widget: Photos()),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Displaying a 'SOS' option Button
-              OptionButton(text: 'SOS', widget: Home()),
+              const OptionButton(text: 'SOS', widget: SOS()),
 
               // Placing an image on bottom-right side
               Expanded(
@@ -106,7 +109,7 @@ class _FamilyState extends State<Family> {
                   child: Container(
                     width: 250.0,
                     height: 280.0,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       image: DecorationImage(
                         image: AssetImage('assets/images/family2.png'),
                         fit: BoxFit.cover,

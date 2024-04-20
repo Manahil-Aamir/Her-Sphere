@@ -21,7 +21,7 @@ class Logout extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
           foregroundColor: Color(0xFF716562),
-          textStyle: TextStyle(
+          textStyle: const TextStyle(
             fontSize: 12,
             fontFamily: 'OverlockSC',
             fontWeight: FontWeight.w800,
@@ -42,7 +42,7 @@ class Logout extends StatelessWidget {
         },
 
         // The child widget of the button, which is a centered text with the given text.
-        child: Center(child: Text('LOGOUT'))),
+        child: const Center(child: Text('LOGOUT'))),
       
     );
   }
