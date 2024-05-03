@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hersphere/mainpages/home.dart';
+import 'package:hersphere/tasktrackerpages/todo.dart';
 import '../impwidgets/backarrow.dart';
 import '../impwidgets/button.dart';
 import '../impwidgets/logout.dart';
@@ -16,14 +17,14 @@ class _TaskTrackerState extends State<TaskTracker> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFB5EFFC),
+      backgroundColor: const Color(0xFFB5EFFC),
       
       //App Bar with 'Logout' button and back arrow to 'Home'
       appBar: AppBar(
-        backgroundColor: Color(0xFFB5EFFC),
+        backgroundColor: const Color(0xFFB5EFFC),
         elevation: 0.5,
-        leading: BackArrow(widget: Home()),
-        actions: <Widget>[
+        leading: const BackArrow(widget: Home()),
+        actions: const <Widget>[
           Logout(),
         ],
       ),
@@ -31,7 +32,7 @@ class _TaskTrackerState extends State<TaskTracker> {
       body: SafeArea(
         child: Padding(
           //Applying padding to all widgets
-          padding: EdgeInsets.fromLTRB(12.0, 4.0, 0.0, 4.0),
+          padding: const EdgeInsets.fromLTRB(12.0, 4.0, 0.0, 4.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -43,7 +44,7 @@ class _TaskTrackerState extends State<TaskTracker> {
                   child: Container(
                     width: 116,
                     height: 118,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage('assets/images/tasktracker1.png'),
                       fit: BoxFit.cover,
@@ -53,7 +54,7 @@ class _TaskTrackerState extends State<TaskTracker> {
               ),
             ),
 
-              SizedBox(height: 73), // Add spacing between widgets
+              const SizedBox(height: 73), // Add spacing between widgets
 
               //UI for 'TASK TRACKER' category
               Row(
@@ -78,7 +79,7 @@ class _TaskTrackerState extends State<TaskTracker> {
                         ),
                       ),
                       // Text with font color
-                      Text(
+                      const Text(
                         'TASK\nTRACKER',
                         textAlign: TextAlign.center,
                         style: TextStyle(
@@ -91,22 +92,22 @@ class _TaskTrackerState extends State<TaskTracker> {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               //Displaying a 'EXPENSES' option Button
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   OptionButton(text: 'EXPENSES', widget: Home(),),
                 ],
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               //Displaying a 'TO-DO LIST' option Button
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  OptionButton(text: 'TO-DO LIST', widget: Home()),
+                  OptionButton(text: 'TO-DO LIST', widget: ToDo()),
                 ],
               ),
 
@@ -117,7 +118,7 @@ class _TaskTrackerState extends State<TaskTracker> {
                   child: Container(
                     width: 185.0,
                     height: 230.0,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       image: DecorationImage(
                         image: AssetImage('assets/images/tasktracker2.png'),
                         fit: BoxFit.cover,

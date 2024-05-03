@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hersphere/familypages/birthday.dart';
 import 'package:hersphere/familypages/family.dart';
+import 'package:hersphere/impwidgets/appbar.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:permission_handler/permission_handler.dart';
@@ -383,69 +384,12 @@ Future<void> _futureBirthdays(Birthday birthday, DateTime scheduleDate) async {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9CFFD),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF9CFFD),
-        elevation: 0.5,
-        //Going back to 'Family' homepage
-        leading: const BackArrow(widget: Family()),
-        title: Stack(
-          children: [
-            //Text with stroke (boundary)
-            Text(
-              'FAMILY',
-              style: TextStyle(
-                fontFamily: 'OtomanopeeOne',
-                fontSize: 30.0,
-                foreground: Paint()
-                  ..style = PaintingStyle.stroke
-                  ..strokeWidth = 2.0
-                  ..color = Colors.white,
-              ),
-            ),
-            //Text with font color
-            const Text(
-              'FAMILY',
-              style: TextStyle(
-                fontFamily: 'OtomanopeeOne',
-                fontSize: 30.0,
-                color: Color(0xFF726662),
-              ),
-            ),
-          ],
-        ),
-        centerTitle: true,
-      ),
+      appBar: const AppBarWidget(text: 'BIRTHDAYS', color: Color(0xFFF9CFFD), back: Family(),),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Text with stroke (boundary)
-                  Text(
-                    'BIRTHDAYS',
-                    style: TextStyle(
-                      fontFamily: 'OtomanopeeOne',
-                      fontSize: 40.0,
-                      foreground: Paint()
-                        ..style = PaintingStyle.stroke
-                        ..strokeWidth = 2.0
-                        ..color = Colors.white,
-                    ),
-                  ),
-                  // Text with font color
-                  const Text(
-                    'BIRTHDAYS',
-                    style: TextStyle(
-                      fontFamily: 'OtomanopeeOne',
-                      fontSize: 40.0,
-                      color: Color(0xFF726662),
-                    ),
-                  ),
-                ],
-              ),
               //Creating a list to display all the birthdays
               Expanded(
                 child: ListView.builder(
@@ -552,6 +496,7 @@ Future<void> _futureBirthdays(Birthday birthday, DateTime scheduleDate) async {
                           content: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
+                              //Adding a name
                               TextField(
                                 decoration: const InputDecoration(
                                   labelText: 'Name',
@@ -568,6 +513,7 @@ Future<void> _futureBirthdays(Birthday birthday, DateTime scheduleDate) async {
                                 },
                               ),
                               const SizedBox(height: 20),
+                              //Selecting a date
                               Row(
                                 children: [
                                   const Text(
@@ -604,6 +550,7 @@ Future<void> _futureBirthdays(Birthday birthday, DateTime scheduleDate) async {
                             ],
                           ),
                           actions: <Widget>[
+                            //Cancel
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
@@ -621,6 +568,7 @@ Future<void> _futureBirthdays(Birthday birthday, DateTime scheduleDate) async {
                                 ),
                               ),
                             ),
+                            //Add Birthday
                             TextButton(
                               onPressed: () {
                                 _addBirthday(context);

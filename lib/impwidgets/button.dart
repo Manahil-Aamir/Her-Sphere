@@ -24,7 +24,7 @@ class OptionButton extends StatelessWidget {
         // The style of the button, including background color, text style, and more.
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
-          foregroundColor: Color(0xFF716562),
+          foregroundColor: const Color(0xFF716562),
           textStyle: const TextStyle(
             fontSize: 30,
             fontFamily: 'OverlockSC',

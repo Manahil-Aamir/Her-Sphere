@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hersphere/familypages/numbers.dart';
+import 'package:hersphere/impwidgets/appbar.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:geocoding/geocoding.dart';
@@ -196,43 +197,11 @@ class _SOSState extends State<SOS> {
     return Scaffold(
       backgroundColor: const Color(0xFFF9CFFD),
       //title of the screen
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF9CFFD),
-        elevation: 0.5,
-        //Going back to 'Family page'
-        leading: const BackArrow(widget: Family()),
-        title: Stack(
-          children: [
-            //Text with stroke (boundary)
-            Text(
-              'SOS',
-              style: TextStyle(
-                fontFamily: 'OtomanopeeOne',
-                fontSize: 30.0,
-                foreground: Paint()
-                  ..style = PaintingStyle.stroke
-                  ..strokeWidth = 2.0
-                  ..color = Colors.white,
-              ),
-            ),
-            //Text with font color
-            const Text(
-              'SOS',
-              style: TextStyle(
-                fontFamily: 'OtomanopeeOne',
-                fontSize: 30.0,
-                color: Color(0xFF726662),
-              ),
-            ),
-          ],
-        ),
-        centerTitle: true,
-      ),
+      appBar: const AppBarWidget(text: 'SOS', color: Color(0xFFF9CFFD), back: Family(),),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-
             //SOS button
              IconButton(
                 icon: Image.asset('assets/images/sos1.png'),

@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:hersphere/familypages/family.dart';
 import 'package:hersphere/familypages/sos.dart';
 import 'package:hersphere/familypages/imagepreview.dart';
+import 'package:hersphere/impwidgets/appbar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:device_info/device_info.dart';
@@ -138,38 +140,7 @@ class _PhotosState extends State<Photos> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9CFFD),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF9CFFD),
-        elevation: 0.5,
-        //option of going back
-        leading: const BackArrow(widget: SOS()),
-        title: Stack(
-          children: [
-            //Text with stroke (boundary)
-            Text(
-              'Photos',
-              style: TextStyle(
-                fontFamily: 'OtomanopeeOne',
-                fontSize: 30.0,
-                foreground: Paint()
-                  ..style = PaintingStyle.stroke
-                  ..strokeWidth = 2.0
-                  ..color = Colors.white,
-              ),
-            ),
-            //Text with font color
-            const Text(
-              'Photos',
-              style: TextStyle(
-                fontFamily: 'OtomanopeeOne',
-                fontSize: 30.0,
-                color: Color(0xFF726662),
-              ),
-            ),
-          ],
-        ),
-        centerTitle: true,
-      ),
+      appBar: const AppBarWidget(text: 'PHOTOS', color: Color(0xFFF9CFFD), back: Family(),),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hersphere/mainpages/home.dart';
+import 'package:hersphere/selfcarepages/journal.dart';
 import '../impwidgets/backarrow.dart';
 import '../impwidgets/button.dart';
 import '../impwidgets/logout.dart';
@@ -14,22 +15,23 @@ class SelfCare extends StatefulWidget {
 class _SelfCareState extends State<SelfCare> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFFBCF7C5),
-
-      //App Bar with 'Logout' button and back arrow to 'Home'
-      appBar: AppBar(
-        backgroundColor: Color(0xFFBCF7C5),
+    var appBar = AppBar(
+        backgroundColor: const Color(0xFFBCF7C5),
         elevation: 0.5,
-        leading: BackArrow(widget: Home()),
-        actions: <Widget>[
+        leading: const BackArrow(widget: Home()),
+        actions: const <Widget>[
           Logout(),
         ],
-      ),
+      );
+    return Scaffold(
+      backgroundColor: const Color(0xFFBCF7C5),
+
+      //App Bar with 'Logout' button and back arrow to 'Home'
+      appBar: appBar,
 
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(0.0, 10.0, 12.0, 4.0),
+          padding:  const EdgeInsets.fromLTRB(0.0, 10.0, 12.0, 4.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -42,7 +44,7 @@ class _SelfCareState extends State<SelfCare> {
                   child: Container(
                     width: 200.31,
                     height: 152.49,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage('assets/images/selfcare1.png'),
                           fit: BoxFit.cover,
@@ -71,7 +73,7 @@ class _SelfCareState extends State<SelfCare> {
                       ),
                     ),
                     // Text with font color
-                    Text(
+                    const Text(
                       'SELF CARE',
                       style: TextStyle(
                         fontFamily: 'OtomanopeeOne',
@@ -83,22 +85,22 @@ class _SelfCareState extends State<SelfCare> {
                 ),
               ),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Displaying a 'JOURNAL' option Button
-              OptionButton(text: 'JOURNAL', widget: Home()),
+              const OptionButton(text: 'JOURNAL', widget: Journal()),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Displaying a 'HYDRATION REMINDER' option Button
-              OptionButton(text: 'HYDRATION REMINDER', widget: Home()),
+              const OptionButton(text: 'HYDRATION REMINDER', widget: Home()),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Displaying a 'SOS' option Button
-              OptionButton(text: 'WORKOUT PLAN', widget: Home()),
+              const OptionButton(text: 'WORKOUT PLAN', widget: Home()),
 
-              SizedBox(height: 100),
+              const SizedBox(height: 100),
 
               // Placing an image on bottom-right side
               Expanded(
@@ -107,7 +109,7 @@ class _SelfCareState extends State<SelfCare> {
                   child: Container(
                     width: 160.0,
                     height: 450.0,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       image: DecorationImage(
                         image: AssetImage('assets/images/selfcare2.png'),
                         fit: BoxFit.cover,

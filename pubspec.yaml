@@ -45,6 +45,7 @@ dependencies:
   device_info: ^2.0.3
   image_picker: ^1.0.4
   timezone: ^0.9.2
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -107,6 +108,9 @@ flutter:
     - family: Birthstone
       fonts:
         - asset: assets\fonts\Birthstone-Regular.ttf
+    - family: Times New Roman
+      fonts:
+        - asset: assets\fonts\times.ttf
 
   #   - family: Trajan Pro
   #     fonts:
