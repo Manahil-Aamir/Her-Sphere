@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hersphere/impwidgets/backarrow.dart';
+import 'package:hersphere/mainpages/login.dart';
 import 'package:hersphere/mainpages/welcome.dart';
 
 import 'home.dart';
@@ -144,34 +145,32 @@ class _RegisterState extends State<Register> {
           const SizedBox(height: 20.0),
 
           //UI for taking password as input
-          Container( 
-            child: Row(
-              children: [
-                //Heading of 'PASSWORD'
-                Text(
-                  'Password:',
-                  style: TextStyle(
-                    color: Color(0xFF716562),
-                    fontSize: 25,
-                    fontFamily: 'OverlockSC',
-                    fontWeight: FontWeight.w400,
-                  ),
+          Row(
+            children: [
+              //Heading of 'PASSWORD'
+              const Text(
+                'Password:',
+                style: TextStyle(
+                  color: Color(0xFF716562),
+                  fontSize: 25,
+                  fontFamily: 'OverlockSC',
+                  fontWeight: FontWeight.w400,
                 ),
-                SizedBox(width: 5.0),
-                //Field for entering Password
-                Expanded(
-                  child: TextField(
-                    controller: _passwordController,
-                    decoration: const InputDecoration(
-                      fillColor: Colors.white,
-                      filled: true,
-                      labelText: '####',
-                    ),
-                    obscureText: true,
+              ),
+              const SizedBox(width: 5.0),
+              //Field for entering Password
+              Expanded(
+                child: TextField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(
+                    fillColor: Colors.white,
+                    filled: true,
+                    labelText: '####',
                   ),
+                  obscureText: true,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
 
           const SizedBox(height: 20.0),
@@ -205,7 +204,7 @@ class _RegisterState extends State<Register> {
           const SizedBox(height: 15.0),
 
           //UI for 'OR' text
-          Text(
+          const Text(
             'or',
             style: TextStyle(
               color: Color(0xFF716562),
@@ -227,7 +226,7 @@ class _RegisterState extends State<Register> {
               width: 35.0,
               height: 35.0,
             ),
-            label: Text(
+            label: const Text(
               'Continue with Google',
               style: TextStyle(
                 color: Color(0xFF716562),
@@ -244,6 +243,32 @@ class _RegisterState extends State<Register> {
               ),
             ),
           ),
+          const SizedBox(height : 40.0),
+             //Button to redirect to register page
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Login()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF716562),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text(
+                'Already have an account? Login',
+                style: TextStyle(
+                  color: Color(0xFF716562),
+                  fontSize: 20,
+                  fontFamily: 'OverlockSC',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
         ],
       ),
     ),

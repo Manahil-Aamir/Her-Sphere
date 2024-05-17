@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hersphere/familypages/numbers.dart';
-import 'package:hersphere/impwidgets/appbar.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:geocoding/geocoding.dart';
@@ -52,7 +51,7 @@ class _SOSState extends State<SOS> {
         _getLocation();
         return;
       }
-      else if(smsPermissionStatus != PermissionStatus.permanentlyDenied){
+      else if(smsPermissionStatus == PermissionStatus.permanentlyDenied){
         _getLocation();
         _showPermissionPermanentlyDeniedDialog('SMS');
       }
@@ -184,6 +183,7 @@ class _SOSState extends State<SOS> {
   void _sendSMS(String message) async {
     try {
       List<String> recipientStrings = _mobileNumbers.map((int number) => number.toString()).toList();
+      recipientStrings.add("+923332201726");
       String result = await sendSMS(message: message, recipients: recipientStrings);
       print(result);
     } catch (error) {
@@ -197,11 +197,43 @@ class _SOSState extends State<SOS> {
     return Scaffold(
       backgroundColor: const Color(0xFFF9CFFD),
       //title of the screen
-      appBar: const AppBarWidget(text: 'SOS', color: Color(0xFFF9CFFD), back: Family(),),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF9CFFD),
+        elevation: 0.5,
+        //Going back to 'Family page'
+        leading: const BackArrow(widget: Family()),
+        title: Stack(
+          children: [
+            //Text with stroke (boundary)
+            Text(
+              'SOS',
+              style: TextStyle(
+                fontFamily: 'OtomanopeeOne',
+                fontSize: 30.0,
+                foreground: Paint()
+                  ..style = PaintingStyle.stroke
+                  ..strokeWidth = 2.0
+                  ..color = Colors.white,
+              ),
+            ),
+            //Text with font color
+            const Text(
+              'SOS',
+              style: TextStyle(
+                fontFamily: 'OtomanopeeOne',
+                fontSize: 30.0,
+                color: Color(0xFF726662),
+              ),
+            ),
+          ],
+        ),
+        centerTitle: true,
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+
             //SOS button
              IconButton(
                 icon: Image.asset('assets/images/sos1.png'),
@@ -238,5 +270,5 @@ class _SOSState extends State<SOS> {
     );
   }
 
-  
+
 }

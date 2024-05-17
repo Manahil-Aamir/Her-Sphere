@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:hersphere/impwidgets/backarrow.dart';
 import 'package:hersphere/mainpages/home.dart';
+import 'package:hersphere/mainpages/register.dart';
 import 'package:hersphere/mainpages/welcome.dart';
 
 class Login extends StatefulWidget {
@@ -141,10 +142,9 @@ class _LoginState extends State<Login> {
             //Button to Submit the form
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const  Home()),
-                );
+                Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => Home()),
+                (Route route) => false);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
@@ -203,6 +203,32 @@ class _LoginState extends State<Login> {
                 foregroundColor: const Color(0xFF716562),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            const SizedBox(height : 40.0),
+             //Button to redirect to register page
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Register()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF716562),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text(
+                'New? Create a new account',
+                style: TextStyle(
+                  color: Color(0xFF716562),
+                  fontSize: 25,
+                  fontFamily: 'OverlockSC',
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),

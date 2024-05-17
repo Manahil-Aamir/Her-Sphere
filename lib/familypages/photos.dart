@@ -21,11 +21,12 @@ class Photos extends StatefulWidget {
 
 class _PhotosState extends State<Photos> {
   List<File> _savedImages = [];
+  bool pick = false;
 
   @override
   void initState() {
     super.initState();
-    _checkPhotoPermission();
+    _checkPhotoPermission(pick);
   }
 
    //Evaluating the android version of user to decide which permissions to ask for accessng photos
@@ -40,7 +41,7 @@ class _PhotosState extends State<Photos> {
   }
 
   //Asking for permission from  user to access their gallery and camera
-  Future<void> _checkPhotoPermission() async {
+  Future<void> _checkPhotoPermission(bool b) async {
   PermissionStatus status = await Permission.photos.status;
   if (status != PermissionStatus.granted) {
     status = await Permission.photos.request();
@@ -61,7 +62,7 @@ class _PhotosState extends State<Photos> {
       _showPermissionPermanentlyDeniedDialog('Photos');
     }
   }
-  if (status == PermissionStatus.granted) {
+  if (status == PermissionStatus.granted && b) {
     pickImage();
   }
 }
@@ -157,7 +158,7 @@ class _PhotosState extends State<Photos> {
                   return GestureDetector(
                     onTap: () {
                       // Enlarge the selected photo on tap
-                      Navigator.of(context).push(MaterialPageRoute(
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) => ImagePreview(image: _savedImages[index]),
                       ));
                     },
@@ -232,7 +233,11 @@ class _PhotosState extends State<Photos> {
               alignment: Alignment.bottomRight,
               child: FloatingActionButton(
                 backgroundColor: Colors.white,
-                onPressed: () => _checkPhotoPermission(),
+                onPressed: () {
+                  pick = true;
+                  _checkPhotoPermission(pick);
+                  pick = false;
+                }, 
                 child: const Icon(Icons.add, color: Color(0xFF726662)),
               ),
             ),

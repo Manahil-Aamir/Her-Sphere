@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hersphere/mainpages/home.dart';
+import 'package:hersphere/selfcarepages/daily.dart';
+import 'package:hersphere/selfcarepages/hydration.dart';
 import 'package:hersphere/selfcarepages/journal.dart';
 import '../impwidgets/backarrow.dart';
 import '../impwidgets/button.dart';
@@ -93,12 +95,12 @@ class _SelfCareState extends State<SelfCare> {
               const SizedBox(height: 20),
 
               // Displaying a 'HYDRATION REMINDER' option Button
-              const OptionButton(text: 'HYDRATION REMINDER', widget: Home()),
+              const OptionButton(text: 'HYDRATION REMINDER', widget: Hydration()),
 
               const SizedBox(height: 20),
 
               // Displaying a 'SOS' option Button
-              const OptionButton(text: 'WORKOUT PLAN', widget: Home()),
+              const OptionButton(text: 'DAILY PLAN', widget: Daily()),
 
               const SizedBox(height: 100),
 

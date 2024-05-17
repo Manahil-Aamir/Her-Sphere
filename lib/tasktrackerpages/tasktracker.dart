@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hersphere/mainpages/home.dart';
+import 'package:hersphere/tasktrackerpages/expenses.dart';
 import 'package:hersphere/tasktrackerpages/todo.dart';
 import '../impwidgets/backarrow.dart';
 import '../impwidgets/button.dart';
@@ -98,7 +99,7 @@ class _TaskTrackerState extends State<TaskTracker> {
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  OptionButton(text: 'EXPENSES', widget: Home(),),
+                  OptionButton(text: 'EXPENSES', widget: Expenses(),),
                 ],
               ),
               const SizedBox(height: 20),

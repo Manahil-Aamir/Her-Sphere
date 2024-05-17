@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hersphere/selfcarepages/ViewJournalEntry.dart';
 import 'package:intl/intl.dart';
 import 'package:hersphere/impwidgets/appbar.dart';
@@ -134,22 +135,24 @@ class _JournalState extends State<Journal> {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               //Entering entry and limit is of 500 characters
-                              TextField(
-                                maxLength: 500,
-                                maxLines: 10,
-                                decoration: const InputDecoration(
-                                  labelText: 'Add New Entry',
-                                  labelStyle: TextStyle(
-                                    fontFamily: 'OtomanopeeOne',
-                                    fontSize: 17.0,
-                                    color: Color(0xFF726662),
+                              Flexible(
+                                child: TextField(
+                                  maxLength: 500,
+                                  maxLines: 10,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Add New Entry',
+                                    labelStyle: TextStyle(
+                                      fontFamily: 'OtomanopeeOne',
+                                      fontSize: 17.0,
+                                      color: Color(0xFF726662),
+                                    ),
                                   ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      t = value;
+                                    });
+                                  },
                                 ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    t = value;
-                                  });
-                                },
                               ),
                             ],
                           ),
