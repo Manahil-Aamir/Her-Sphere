@@ -29,7 +29,7 @@ class _ExpensesState extends State<Expenses> {
   void remainingAmount() {
     int r = total;
     for (int i = 0; i < expenses.length; i++) {
-      r -= expenses[i][1] as int;
+      r -= int.parse(expenses[i][1].toString());
     }
     setState(() {
       remaining = r;
@@ -107,7 +107,9 @@ class _ExpensesState extends State<Expenses> {
 
   @override
   Widget build(BuildContext context) {
+    Map<String, double> dataMap = Map.fromEntries(expenses.map((expense) => MapEntry(expense[0], double.parse(expense[1].toString()))));
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xFFB5EFFC),
       appBar: const AppBarWidget(
         text: 'EXPENSES',
@@ -197,6 +199,31 @@ class _ExpensesState extends State<Expenses> {
                       )),
                 )
               ],
+            ),
+            PieChart(
+              dataMap: dataMap,
+              animationDuration: const Duration(milliseconds: 800),
+              chartLegendSpacing: 32.0,
+              chartRadius: MediaQuery.of(context).size.width / 3.2,
+              initialAngleInDegree: 0,
+              chartType: ChartType.disc,
+              ringStrokeWidth: 32,
+              centerText: "Expenses",
+              legendOptions: const LegendOptions(
+                showLegendsInRow: false,
+                legendPosition: LegendPosition.right,
+                showLegends: true,
+                legendShape: BoxShape.circle,
+                legendTextStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              chartValuesOptions: ChartValuesOptions(
+                showChartValues: true,
+                showChartValuesInPercentage: true,
+                showChartValuesOutside: false,
+                decimalPlaces: 1,
+              ),
             ),
           ],
         ),
