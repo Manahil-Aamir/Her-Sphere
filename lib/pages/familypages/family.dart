@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hersphere/familypages/birthdays.dart';
-import 'package:hersphere/familypages/photos.dart';
-import 'package:hersphere/familypages/sos.dart';
-import 'package:hersphere/mainpages/home.dart';
+import 'package:hersphere/pages/familypages/birthdays.dart';
+import 'package:hersphere/pages/familypages/photos.dart';
+import 'package:hersphere/pages/familypages/sos.dart';
+import 'package:hersphere/pages/mainpages/home.dart';
 import '../impwidgets/backarrow.dart';
 import '../impwidgets/button.dart';
 import '../impwidgets/logout.dart';

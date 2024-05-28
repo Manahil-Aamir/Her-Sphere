@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hersphere/familypages/family.dart';
-import 'package:hersphere/impwidgets/button.dart';
-import 'package:hersphere/selfcarepages/selfcare.dart';
-import 'package:hersphere/tasktrackerpages/tasktracker.dart';
+import 'package:hersphere/pages/familypages/family.dart';
+import 'package:hersphere/pages/impwidgets/button.dart';
+import 'package:hersphere/pages/selfcarepages/selfcare.dart';
+import 'package:hersphere/pages/tasktrackerpages/tasktracker.dart';
 import '../impwidgets/logout.dart';
 
 class Home extends StatefulWidget {

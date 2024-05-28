@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:hersphere/selfcarepages/entry.dart';
+import 'package:hersphere/pages/selfcarepages/entry.dart';
 
 class ViewJournalEntry extends StatelessWidget {
   final Entry journal;

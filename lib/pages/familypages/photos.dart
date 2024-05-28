@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:hersphere/familypages/family.dart';
-import 'package:hersphere/familypages/sos.dart';
-import 'package:hersphere/familypages/imagepreview.dart';
-import 'package:hersphere/impwidgets/appbar.dart';
+import 'package:hersphere/pages/familypages/family.dart';
+import 'package:hersphere/pages/familypages/sos.dart';
+import 'package:hersphere/pages/familypages/imagepreview.dart';
+import 'package:hersphere/pages/impwidgets/appbar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:device_info/device_info.dart';

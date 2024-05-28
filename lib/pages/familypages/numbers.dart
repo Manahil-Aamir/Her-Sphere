@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:hersphere/familypages/sos.dart';
+import 'package:hersphere/pages/familypages/sos.dart';
 import '../impwidgets/backarrow.dart';
 
 class Numbers extends StatefulWidget {

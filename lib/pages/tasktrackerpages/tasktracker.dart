@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hersphere/mainpages/home.dart';
-import 'package:hersphere/tasktrackerpages/expenses.dart';
-import 'package:hersphere/tasktrackerpages/todo.dart';
+import 'package:hersphere/pages/mainpages/home.dart';
+import 'package:hersphere/pages/tasktrackerpages/expenses.dart';
+import 'package:hersphere/pages/tasktrackerpages/todo.dart';
 import '../impwidgets/backarrow.dart';
 import '../impwidgets/button.dart';
 import '../impwidgets/logout.dart';

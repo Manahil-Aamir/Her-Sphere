@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:hersphere/impwidgets/appbar.dart';
-import 'package:hersphere/selfcarepages/selfcare.dart';
+import 'package:hersphere/pages/impwidgets/appbar.dart';
+import 'package:hersphere/pages/selfcarepages/selfcare.dart';
 
 
 class Daily extends StatefulWidget {

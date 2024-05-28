@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hersphere/impwidgets/backarrow.dart';
-import 'package:hersphere/mainpages/login.dart';
-import 'package:hersphere/mainpages/welcome.dart';
+import 'package:hersphere/pages/impwidgets/backarrow.dart';
+import 'package:hersphere/pages/mainpages/login.dart';
+import 'package:hersphere/pages/mainpages/welcome.dart';
 
 import 'home.dart';
 

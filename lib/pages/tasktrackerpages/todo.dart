@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hersphere/impwidgets/appbar.dart';
-import 'package:hersphere/tasktrackerpages/task.dart';
-import 'package:hersphere/tasktrackerpages/tasktracker.dart';
+import 'package:hersphere/pages/impwidgets/appbar.dart';
+import 'package:hersphere/pages/tasktrackerpages/task.dart';
+import 'package:hersphere/pages/tasktrackerpages/tasktracker.dart';
 
 
 class ToDo extends StatefulWidget {

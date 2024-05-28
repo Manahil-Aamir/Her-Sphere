@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:hersphere/familypages/photos.dart';
+import 'package:hersphere/pages/familypages/photos.dart';
 
 import '../impwidgets/backarrow.dart';
 

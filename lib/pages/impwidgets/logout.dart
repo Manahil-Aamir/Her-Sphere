@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hersphere/mainpages/login.dart';
+import 'package:hersphere/pages/mainpages/login.dart';
 
 class Logout extends StatelessWidget {
   // Constructor for the `Logout` widget.

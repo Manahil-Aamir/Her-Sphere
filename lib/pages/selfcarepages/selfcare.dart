@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hersphere/mainpages/home.dart';
-import 'package:hersphere/selfcarepages/daily.dart';
-import 'package:hersphere/selfcarepages/hydration.dart';
-import 'package:hersphere/selfcarepages/journal.dart';
+import 'package:hersphere/pages/mainpages/home.dart';
+import 'package:hersphere/pages/selfcarepages/daily.dart';
+import 'package:hersphere/pages/selfcarepages/hydration.dart';
+import 'package:hersphere/pages/selfcarepages/journal.dart';
 import '../impwidgets/backarrow.dart';
 import '../impwidgets/button.dart';
 import '../impwidgets/logout.dart';

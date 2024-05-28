@@ -1,11 +1,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:hersphere/selfcarepages/ViewJournalEntry.dart';
+import 'package:hersphere/pages/selfcarepages/ViewJournalEntry.dart';
 import 'package:intl/intl.dart';
-import 'package:hersphere/impwidgets/appbar.dart';
-import 'package:hersphere/selfcarepages/entry.dart';
-import 'package:hersphere/selfcarepages/selfcare.dart';
+import 'package:hersphere/pages/impwidgets/appbar.dart';
+import 'package:hersphere/pages/selfcarepages/entry.dart';
+import 'package:hersphere/pages/selfcarepages/selfcare.dart';
 
 
 class Journal extends StatefulWidget {
