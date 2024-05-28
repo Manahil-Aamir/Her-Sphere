@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hersphere/pages/impwidgets/button.dart';
-import 'package:hersphere/pages/mainpages/login.dart';
-import 'package:hersphere/pages/mainpages/register.dart';
+import 'package:hersphere/pages/authpages/login.dart';
+import 'package:hersphere/pages/authpages/register.dart';
 
 class Welcome extends StatefulWidget {
   const Welcome({super.key});

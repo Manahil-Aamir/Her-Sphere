@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hersphere/pages/impwidgets/backarrow.dart';
-import 'package:hersphere/pages/mainpages/login.dart';
+import 'package:hersphere/pages/authpages/login.dart';
 import 'package:hersphere/pages/mainpages/welcome.dart';
 
-import 'home.dart';
+import '../mainpages/home.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});

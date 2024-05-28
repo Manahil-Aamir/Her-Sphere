@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:hersphere/pages/impwidgets/backarrow.dart';
 import 'package:hersphere/pages/mainpages/home.dart';
-import 'package:hersphere/pages/mainpages/register.dart';
+import 'package:hersphere/pages/authpages/register.dart';
 import 'package:hersphere/pages/mainpages/welcome.dart';
 
 class Login extends StatefulWidget {
