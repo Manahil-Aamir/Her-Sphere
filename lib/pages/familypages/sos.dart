@@ -1,24 +1,26 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hersphere/pages/familypages/numbers.dart';
+import 'package:hersphere/providers/familystream_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:geocoding/geocoding.dart';
 import 'package:flutter_sms/flutter_sms.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../impwidgets/backarrow.dart';
 import 'family.dart';
 
-class SOS extends StatefulWidget {
+class SOS extends ConsumerStatefulWidget {
   const SOS({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _SOSState createState() => _SOSState();
+  ConsumerState<SOS> createState() => _SOSState();
 }
 
-class _SOSState extends State<SOS> {
-  List<int> _mobileNumbers = [];
+class _SOSState extends ConsumerState<SOS> {
   int tempNumber = 0;
+
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   void initState() {
@@ -31,7 +33,8 @@ class _SOSState extends State<SOS> {
   Future<void> _checkPermissions() async {
     final PermissionStatus locationStatus = await Permission.location.status;
     if (locationStatus != PermissionStatus.granted) {
-      final PermissionStatus locationPermissionStatus = await Permission.location.request();
+      final PermissionStatus locationPermissionStatus =
+          await Permission.location.request();
       if (locationPermissionStatus == PermissionStatus.denied) {
         _showPermissionDeniedDialog('Location');
         return;
@@ -41,17 +44,18 @@ class _SOSState extends State<SOS> {
       return;
     }
 
-    //if location of permission is given and not sms so popup of location can still be viewed by user 
+    //if location of permission is given and not sms so popup of location can still be viewed by user
     final PermissionStatus smsStatus = await Permission.sms.status;
     print(PermissionStatus);
     if (smsStatus != PermissionStatus.granted) {
-      final PermissionStatus smsPermissionStatus = await Permission.sms.request();
-      if (smsPermissionStatus != PermissionStatus.granted && smsPermissionStatus != PermissionStatus.permanentlyDenied) {
+      final PermissionStatus smsPermissionStatus =
+          await Permission.sms.request();
+      if (smsPermissionStatus != PermissionStatus.granted &&
+          smsPermissionStatus != PermissionStatus.permanentlyDenied) {
         _showPermissionDeniedDialog('SMS');
         _getLocation();
         return;
-      }
-      else if(smsPermissionStatus == PermissionStatus.permanentlyDenied){
+      } else if (smsPermissionStatus == PermissionStatus.permanentlyDenied) {
         _getLocation();
         _showPermissionPermanentlyDeniedDialog('SMS');
       }
@@ -68,7 +72,8 @@ class _SOSState extends State<SOS> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('$permissionName Permission Denied'),
-          content: Text('$permissionName permissions are required to send SOS messages.'),
+          content: Text(
+              '$permissionName permissions are required to send SOS messages.'),
           actions: <Widget>[
             ElevatedButton(
               onPressed: () {
@@ -89,19 +94,20 @@ class _SOSState extends State<SOS> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('$permissionName Permission Permanently Denied'),
-          content: Text('Please enable $permissionName permission in app settings to send SOS messages.'),
+          content: Text(
+              'Please enable $permissionName permission in app settings to send SOS messages.'),
           actions: <Widget>[
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Close'),
+              child: const Text('Close'),
             ),
             ElevatedButton(
               onPressed: () {
                 openAppSettings();
               },
-              child: Text('Open Settings'),
+              child: const Text('Open Settings'),
             ),
           ],
         );
@@ -113,19 +119,22 @@ class _SOSState extends State<SOS> {
   Future<void> _getLocationAndSendSOS() async {
     try {
       // Fetch current location
-      geolocator.Position position = await geolocator.Geolocator.getCurrentPosition();
+      geolocator.Position position =
+          await geolocator.Geolocator.getCurrentPosition();
       double lat = position.latitude;
       double lng = position.longitude;
 
       // Reverse geocoding to get address
-      final List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+      final List<Placemark> placemarks =
+          await placemarkFromCoordinates(lat, lng);
       final Placemark place = placemarks.first;
+
+      // Send SOS message
+      _sendSMS(
+          "HELP!!!: ${place.name}, ${place.street}, ${place.locality}, ${place.postalCode}, ${place.country}");
 
       // Display location in popup
       _showLocationPopup(place);
-
-      // Send SOS message
-      _sendSMS("HELP!!!: ${place.name}, ${place.street}, ${place.locality}, ${place.postalCode}, ${place.country}");
     } catch (e) {
       print("Error sending SOS: $e");
     }
@@ -135,12 +144,14 @@ class _SOSState extends State<SOS> {
   Future<void> _getLocation() async {
     try {
       // Fetch current location
-      geolocator.Position position = await geolocator.Geolocator.getCurrentPosition();
+      geolocator.Position position =
+          await geolocator.Geolocator.getCurrentPosition();
       double lat = position.latitude;
       double lng = position.longitude;
 
       // Reverse geocoding to get address
-      final List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+      final List<Placemark> placemarks =
+          await placemarkFromCoordinates(lat, lng);
       final Placemark place = placemarks.first;
 
       // Display location in popup
@@ -179,17 +190,29 @@ class _SOSState extends State<SOS> {
     );
   }
 
-  //Sending SMS to registered numbers
-  void _sendSMS(String message) async {
-    try {
-      List<String> recipientStrings = _mobileNumbers.map((int number) => number.toString()).toList();
-      recipientStrings.add("+923332201726");
-      String result = await sendSMS(message: message, recipients: recipientStrings);
-      print(result);
-    } catch (error) {
-      print(error.toString());
-    }
+Future<List<int>> fetchNumbers(String uid, WidgetRef ref) async {
+  final numbersAsyncValue = await ref.read(numbersStreamProvider(uid).future);
+  return numbersAsyncValue;
+}
+
+Future<void> sendSMSWithNumbers(String message, List<int> numbers) async {
+  try {
+    List<String> recipientStrings = numbers.map((number) => number.toString()).toList();
+    String result = await sendSMS(message: message, recipients: recipientStrings);
+    print(result);
+  } catch (error) {
+    print('Failed to send SMS: $error');
   }
+}
+
+void _sendSMS(String message) async {
+  try {
+    final numbers = await fetchNumbers(user.uid, ref);
+    await sendSMSWithNumbers(message, numbers);
+  } catch (error) {
+    print('Error: $error');
+  }
+}
 
 
   @override
@@ -201,7 +224,7 @@ class _SOSState extends State<SOS> {
         backgroundColor: const Color(0xFFF9CFFD),
         elevation: 0.5,
         //Going back to 'Family page'
-        leading: const BackArrow(widget: Family()),
+        leading: const BackArrow(widget: FamilyPage()),
         title: Stack(
           children: [
             //Text with stroke (boundary)
@@ -233,42 +256,40 @@ class _SOSState extends State<SOS> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-
             //SOS button
-             IconButton(
-                icon: Image.asset('assets/images/sos1.png'),
-                iconSize: 150.0,
-                padding: const EdgeInsets.all(40.0),
-                onPressed: () {
-                  _checkPermissions();
-                },
-              ),
-              const SizedBox(height: 30),
+            IconButton(
+              icon: Image.asset('assets/images/sos1.png'),
+              iconSize: 150.0,
+              padding: const EdgeInsets.all(40.0),
+              onPressed: () {
+                _checkPermissions();
+              },
+            ),
+            const SizedBox(height: 30),
 
-              //Adding numbers to send your location to 
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFFFFF),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Numbers(mobileNumbers: _mobileNumbers)),
-                      );
-                }, 
-                child: const Text("Registered Numbers",
-                style: TextStyle(
-                    fontFamily: 'OtomanopeeOne',
-                    fontSize: 13.0,
-                    color: Color(0xFF726662),
-                ),),
+            //Adding numbers to send your location to
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFFFFFF),
               ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Numbers()),
+                );
+              },
+              child: const Text(
+                "Registered Numbers",
+                style: TextStyle(
+                  fontFamily: 'OtomanopeeOne',
+                  fontSize: 13.0,
+                  color: Color(0xFF726662),
+                ),
+              ),
+            ),
           ],
         ),
       ),
-
     );
   }
-
-
 }

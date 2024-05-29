@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hersphere/pages/familypages/family.dart';
@@ -15,6 +16,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final user = FirebaseAuth.instance.currentUser!;
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -66,30 +68,33 @@ class _HomeState extends State<Home> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   //Creating stack to display Text with stroke
-                  Stack(
-                    children: [
-                      // Text with stroke (boundary)
-                      Text(
-                        'WELCOME SARA',
-                        style: TextStyle(
-                          fontFamily: 'OtomanopeeOne',
-                          fontSize: 40.0,
-                          foreground: Paint()
-                            ..style = PaintingStyle.stroke
-                            ..strokeWidth = 2.0
-                            ..color = Colors.white,
+                  Expanded(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Text with stroke (boundary)
+                        Text(
+                          'WELCOME ${user.displayName}',
+                          style: TextStyle(
+                            fontFamily: 'OtomanopeeOne',
+                            fontSize: 24.0,
+                            foreground: Paint()
+                              ..style = PaintingStyle.stroke
+                              ..strokeWidth = 2.0
+                              ..color = Colors.white,
+                          ),
                         ),
-                      ),
-                      // Text with font color
-                      Text(
-                        'WELCOME SARA',
-                        style: TextStyle(
-                          fontFamily: 'OtomanopeeOne',
-                          fontSize: 40.0,
-                          color: Color(0xFF726662),
+                        // Text with font color
+                        Text(
+                          'WELCOME ${user.displayName}',
+                          style: TextStyle(
+                            fontFamily: 'OtomanopeeOne',
+                            fontSize: 24.0,
+                            color: Color(0xFF726662),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -99,7 +104,7 @@ class _HomeState extends State<Home> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  OptionButton(text: 'FAMILY', widget: Family(),),
+                  OptionButton(text: 'FAMILY', widget: FamilyPage(),),
                 ],
               ),
               SizedBox(height: 20),

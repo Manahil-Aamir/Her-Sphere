@@ -1,144 +1,165 @@
 // ignore_for_file: no_logic_in_create_state
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hersphere/providers/family_provider.dart';
+import 'package:hersphere/providers/familystream_provider.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:hersphere/pages/familypages/sos.dart';
 import '../impwidgets/backarrow.dart';
 
-class Numbers extends StatefulWidget {
-  final List<int> mobileNumbers;
-
-  const Numbers({Key? key, required this.mobileNumbers}) : super(key: key);
+class Numbers extends ConsumerStatefulWidget {
+  const Numbers({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
-  _NumbersState createState() => _NumbersState(mobileNumbers);
+  ConsumerState<Numbers> createState() => _NumbersState();
 }
 
-class _NumbersState extends State<Numbers> {
-  List<int> mobileNumbers;
+class _NumbersState extends ConsumerState<Numbers> {
+  final user = FirebaseAuth.instance.currentUser!;
   int tempNumber = 0;
 
-  _NumbersState(this.mobileNumbers);
+  void _addNumber(BuildContext context, WidgetRef ref) async {
+    final numbersAsyncValue = ref.watch(numbersStreamProvider(user.uid));
 
-  //Adding a valid number and using intl_phone_number_input package
-  void _addNumber(BuildContext context) {
-    if(mobileNumbers.length==3){
-        showDialog(context: context, 
-        builder: (BuildContext context){
-          return const AlertDialog(
-          title: Text(
-          'Cannot enter more Numbers',
-          style: TextStyle(
-            fontFamily: 'OtomanopeeOne',
-            fontSize: 15.0,
-            color: Color(0xFF726662),
-          ),
-          ),
-          );
-        });
-    }
-    else{
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String? phoneNumber;
-        return AlertDialog(
-          title: const Text(
-            'Enter Mobile Number',
-            style: TextStyle(
-              fontFamily: 'OtomanopeeOne',
-              fontSize: 15.0,
-              color: Color(0xFF726662),
-            ),
-          ),
-          content: SizedBox(
-            height: 150,
-            child: Column(
-              children: [
-                InternationalPhoneNumberInput(
-                  onInputChanged: (PhoneNumber number) {
-                    phoneNumber = number.phoneNumber!;
-                  },
-                  inputDecoration: const InputDecoration(
-                    hintText: 'Enter Phone Number',
+    numbersAsyncValue.when(
+      data: (numbers) {
+        if (numbers.length >= 3) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const AlertDialog(
+                title: Text(
+                  'Cannot enter more Numbers',
+                  style: TextStyle(
+                    fontFamily: 'OtomanopeeOne',
+                    fontSize: 15.0,
+                    color: Color(0xFF726662),
                   ),
-                selectorConfig: const SelectorConfig(
-                selectorType: PhoneInputSelectorType.DIALOG
-              ),
-              autoValidateMode: AutovalidateMode.always,
-              onInputValidated: (bool value) {
-                  if (value) {
-                  } else {
-                    phoneNumber = null; // Reset phoneNumber if input is invalid
-                  }
-              }
                 ),
-              ],
-            ),
-          
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                if (phoneNumber != null && phoneNumber!.isNotEmpty) {
-                  setState(() {
-                    mobileNumbers.add(int.parse(phoneNumber!));
-                  });
-                  Navigator.pop(context); // Close dialog
-                }
-                else{
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Invalid phone number. Please try again.')),);
-                } //show error until mobile number is valid
-              },
-              child: const Text(
-                'OK',
-                style: TextStyle(
-                  fontFamily: 'OtomanopeeOne',
-                  fontSize: 15.0,
-                  color: Color(0xFF726662),
+              );
+            },
+          );
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              String? phoneNumber;
+              return AlertDialog(
+                title: const Text(
+                  'Enter Mobile Number',
+                  style: TextStyle(
+                    fontFamily: 'OtomanopeeOne',
+                    fontSize: 15.0,
+                    color: Color(0xFF726662),
+                  ),
                 ),
-              ),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context), // Cancel button
-              child: const Text(
-                'Cancel',
-                style: TextStyle(
-                  fontFamily: 'OtomanopeeOne',
-                  fontSize: 15.0,
-                  color: Color(0xFF726662),
+                content: SizedBox(
+                  height: 150,
+                  child: Column(
+                    children: [
+                      InternationalPhoneNumberInput(
+                        onInputChanged: (PhoneNumber number) {
+                          phoneNumber = number.phoneNumber!;
+                        },
+                        inputDecoration: const InputDecoration(
+                          hintText: 'Enter Phone Number',
+                        ),
+                        selectorConfig: const SelectorConfig(
+                          selectorType: PhoneInputSelectorType.DIALOG,
+                        ),
+                        autoValidateMode: AutovalidateMode.onUserInteraction,
+                        onInputValidated: (bool value) {
+                          if (!value) {
+                            phoneNumber =
+                                null; // Reset phoneNumber if input is invalid
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ),
-          ],
-        );
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      if (phoneNumber != null && phoneNumber!.isNotEmpty) {
+                        ref
+                            .read(familyNotifierProvider.notifier)
+                            .addNumber(user.uid, int.parse(phoneNumber!));
+                        Navigator.pop(context);
+                      } else {
+                        Navigator.pop(
+                            context); // Close dialog before showing SnackBar
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const AlertDialog(
+                                title: Text(
+                                  'Number is invalid',
+                                  style: TextStyle(
+                                    fontFamily: 'OtomanopeeOne',
+                                    fontSize: 15.0,
+                                    color: Color(0xFF726662),
+                                  ),
+                                ),
+                              );
+                            });
+                      }
+                    },
+                    child: const Text(
+                      'OK',
+                      style: TextStyle(
+                        fontFamily: 'OtomanopeeOne',
+                        fontSize: 15.0,
+                        color: Color(0xFF726662),
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context), // Cancel button
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                        fontFamily: 'OtomanopeeOne',
+                        fontSize: 15.0,
+                        color: Color(0xFF726662),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      },
+      loading: () {
+        // Handle loading state
+      },
+      error: (error, stack) {
+        print('Error fetching numbers: $error');
       },
     );
-    }
   }
 
   // Deleting a number
   void _deleteNumber(int number) {
-    setState(() {
-      mobileNumbers.remove(number);
-    });
+    ref.read(familyNotifierProvider.notifier).removeNumber(user.uid, number);
   }
 
+//UI for creating Numbers page
   @override
-  //creating the UI for 'Numbers' page page
   Widget build(BuildContext context) {
+    final numbersAsyncValue = ref.watch(NumbersStreamProvider(user.uid));
+
     return Scaffold(
       backgroundColor: const Color(0xFFF9CFFD),
       appBar: AppBar(
         backgroundColor: const Color(0xFFF9CFFD),
         elevation: 0.5,
-        //Going back to 'SOS' page
         leading: const BackArrow(widget: SOS()),
         title: Stack(
           children: [
-            //Text with stroke (boundary)
             Text(
               'SOS',
               style: TextStyle(
@@ -150,7 +171,6 @@ class _NumbersState extends State<Numbers> {
                   ..color = Colors.white,
               ),
             ),
-            //Text with font color
             const Text(
               'SOS',
               style: TextStyle(
@@ -171,7 +191,6 @@ class _NumbersState extends State<Numbers> {
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Text with stroke (boundary)
                   Text(
                     'NUMBERS',
                     style: TextStyle(
@@ -183,7 +202,6 @@ class _NumbersState extends State<Numbers> {
                         ..color = Colors.white,
                     ),
                   ),
-                  // Text with font color
                   const Text(
                     'NUMBERS',
                     style: TextStyle(
@@ -195,31 +213,40 @@ class _NumbersState extends State<Numbers> {
                 ],
               ),
               const SizedBox(height: 200),
-              // Showing all the numbers in a list
+              // Show the numbers using StreamProvider
               Expanded(
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: mobileNumbers.length,
-                  separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 10),
-                  itemBuilder: (BuildContext context, int index) {
-                    int mobile = mobileNumbers[index];
-                    return ListTile(
-                      tileColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
-                      textColor: const Color(0xFF726662),
-                      title: Text(
-                        mobile.toString(),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      // Delete a number
-                      trailing: IconButton(
-                        onPressed: () => _deleteNumber(mobile),
-                        icon: const Icon(Icons.delete, color: Color(0xFF726662)),
-                      ),
+                child: numbersAsyncValue.when(
+                  data: (numbers) {
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: numbers.length,
+                      separatorBuilder: (BuildContext context, int index) =>
+                          const SizedBox(height: 10),
+                      itemBuilder: (BuildContext context, int index) {
+                        int mobile = numbers[index];
+                        return ListTile(
+                          tileColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(13)),
+                          textColor: const Color(0xFF726662),
+                          title: Text(
+                            mobile.toString(),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          // Delete a number
+                          trailing: IconButton(
+                            onPressed: () => _deleteNumber(mobile),
+                            icon: const Icon(Icons.delete,
+                                color: Color(0xFF726662)),
+                          ),
+                        );
+                      },
                     );
                   },
+                  loading: () => const CircularProgressIndicator(),
+                  error: (error, stack) => Text('Error: $error'),
                 ),
               ),
               // Option of adding a new number
@@ -227,7 +254,7 @@ class _NumbersState extends State<Numbers> {
                 alignment: Alignment.bottomRight,
                 child: FloatingActionButton(
                   backgroundColor: Colors.white,
-                  onPressed: () => _addNumber(context),
+                  onPressed: () => _addNumber(context, ref),
                   child: const Icon(Icons.add, color: Color(0xFF726662)),
                 ),
               ),

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "11198046156",
+    "project_id": "hersphere-650dc",
+    "storage_bucket": "hersphere-650dc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:11198046156:android:d22b392bdb27a4317e4769",
+        "android_client_info": {
+          "package_name": "com.example.hersphere"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "11198046156-as9uu90jq4l095vi0vkuhdlk02kp7l7p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.hersphere",
+            "certificate_hash": "8788d8dc01e62866a5bd069d3cd1b74a60f6f2e5"
+          }
+        },
+        {
+          "client_id": "11198046156-u34afgqppb5ifa1ebp89f25udaj1c7b5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARzwh9aIfkawLoA9r2dDKO7HTMVXff5ew"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "11198046156-u34afgqppb5ifa1ebp89f25udaj1c7b5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

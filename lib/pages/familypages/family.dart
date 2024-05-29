@@ -7,14 +7,14 @@ import '../impwidgets/backarrow.dart';
 import '../impwidgets/button.dart';
 import '../impwidgets/logout.dart';
 
-class Family extends StatefulWidget {
-  const Family({Key? key}) : super(key: key);
+class FamilyPage extends StatefulWidget {
+  const FamilyPage({Key? key}) : super(key: key);
 
   @override
-  State<Family> createState() => _FamilyState();
+  State<FamilyPage> createState() => _FamilyPageState();
 }
 
-class _FamilyState extends State<Family> {
+class _FamilyPageState extends State<FamilyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hersphere/methods/authentication/google.dart';
 import 'package:hersphere/pages/authpages/login.dart';
+import 'package:hersphere/providers/auth_provider.dart';
 
-class Logout extends StatelessWidget {
+class Logout extends ConsumerWidget{
   // Constructor for the `Logout` widget.
   const Logout({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+              final logged = ref.watch(authNotifierProvider);
+    final loggedIn = logged.value;
+    final GoogleSignInProvider _googleSignInProvider =
+        GoogleSignInProvider(loggedIn!);
     return SizedBox(
       // The width of the button.
       width: 80,
@@ -33,9 +40,7 @@ class Logout extends StatelessWidget {
 
           //Navigate to login page when the button is pressed.
           onPressed: () {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => Login()),
-                (Route route) => false);
+            _googleSignInProvider.googleSignOut(context, ref);
           },
 
           // The child widget of the button, which is a centered text with the given text.

@@ -3,11 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hersphere/pages/familypages/photos.dart';
 
-import '../impwidgets/backarrow.dart';
 
 class ImagePreview extends StatelessWidget {
   //Navigation on this screen
-  final File image;
+  final String image;
 
   // Constructor for the `ImagePreview` widget.
   const ImagePreview({Key? key, required this.image}) : super(key: key);
@@ -63,9 +62,8 @@ class ImagePreview extends StatelessWidget {
         ),
         //Displaying enlarged image
         body: Center(
-          child: Image.file(image),
-        ),
-      ),
-    );
+          child: Image.network(image)),
+        )
+      );
   }
 }

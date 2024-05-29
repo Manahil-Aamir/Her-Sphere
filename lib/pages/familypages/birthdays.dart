@@ -2,33 +2,37 @@ import 'dart:async';
 import 'dart:core';
 import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:hersphere/pages/familypages/birthday.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hersphere/pages/familypages/family.dart';
 import 'package:hersphere/pages/impwidgets/appbar.dart';
+import 'package:hersphere/providers/familystream_provider.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:hersphere/models/birthdaymodel.dart';
+import 'package:hersphere/providers/family_provider.dart';
 
-import '../impwidgets/backarrow.dart';
+final selectedDateProvider = StateProvider<DateTime?>((ref) => null);
 
-class Birthdays extends StatefulWidget {
+class Birthdays extends ConsumerStatefulWidget {
   const Birthdays({Key? key}) : super(key: key);
 
   @override
-  State<Birthdays> createState() => BirthdaysState();
+  ConsumerState<Birthdays> createState() => BirthdaysState();
 }
 
-class BirthdaysState extends State<Birthdays> {
-  String name = '';
-  DateTime? selectedDate;
+class BirthdaysState extends ConsumerState<Birthdays> {
+  final nameProvider = StateProvider<String>((ref) => '');
+  final selectedDateProvider = StateProvider<DateTime?>((ref) => null);
   List<Birthday> birthdayList = [];
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   bool notify = false;
-  late tz.Location _localTimeZone;
+  final user = FirebaseAuth.instance.currentUser!;
 
 // Function to initialize the local timezone
   void initializeTimezone() {
@@ -142,95 +146,86 @@ class BirthdaysState extends State<Birthdays> {
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
-  //Option of selecting the birthday date and formatted the visuals of the date picker
   Future<void> _selectDate(BuildContext context) async {
-  DateTime tempPickedDate = selectedDate ?? DateTime.now();
+    DateTime? selectedDate =
+        ref.read(selectedDateProvider.notifier).state ?? DateTime.now();
+    DateTime tempPickedDate = selectedDate ?? DateTime.now();
 
-  await showCupertinoModalPopup<void>(
-    context: context,
-    builder: (BuildContext context) {
-      return Container(
-        height: 250,
-        color: const Color(0xFFF9CFFD),
-        child: Column(
-          children: [
-            Expanded(
-              child: Container(
-                height: 200,
-                color: const Color(0xFFF9CFFD),
-                child: CupertinoTheme(
-                  data: const CupertinoThemeData(
-                    textTheme: CupertinoTextThemeData(
-                      dateTimePickerTextStyle: TextStyle(
-                        color: Color(0xFF726662),
-                        fontSize: 20.0,
-                        fontFamily: 'OtomanopeeOne',
+    await showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 250,
+          color: const Color(0xFFF9CFFD),
+          child: Column(
+            children: [
+              Expanded(
+                child: Container(
+                  height: 200,
+                  color: const Color(0xFFF9CFFD),
+                  child: CupertinoTheme(
+                    data: const CupertinoThemeData(
+                      textTheme: CupertinoTextThemeData(
+                        dateTimePickerTextStyle: TextStyle(
+                          color: Color(0xFF726662),
+                          fontSize: 20.0,
+                          fontFamily: 'OtomanopeeOne',
+                        ),
                       ),
+                      brightness: Brightness.light,
+                      primaryColor: Color(0xFFF9CFFD),
+                      scaffoldBackgroundColor: Color(0xFFF9CFFD),
+                      barBackgroundColor: Color(0xFFF9CFFD),
                     ),
-                    brightness: Brightness.light,
-                    primaryColor: Color(0xFFF9CFFD),
-                    scaffoldBackgroundColor: Color(0xFFF9CFFD),
-                    barBackgroundColor: Color(0xFFF9CFFD),
-                  ),
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.date,
-                    initialDateTime: tempPickedDate,
-                    minimumDate: DateTime(1900),
-                    maximumDate: DateTime.now(),
-                    onDateTimeChanged: (DateTime newDate) {
-                      tempPickedDate = newDate;
-                    },
+                    child: CupertinoDatePicker(
+                      mode: CupertinoDatePickerMode.date,
+                      initialDateTime: tempPickedDate,
+                      minimumDate: DateTime(1900),
+                      maximumDate: DateTime.now(),
+                      onDateTimeChanged: (DateTime newDate) {
+                        tempPickedDate = newDate;
+                      },
+                    ),
                   ),
                 ),
               ),
-            ),
-            CupertinoButton(
-              child: const Text('OK',
-              style: TextStyle(
-                fontFamily: 'OtomanopeeOne',
-                fontSize: 20.0,
-                color: Color(0xFF726662),
-              ),),
-              onPressed: () {
-                setState(() {
-                  selectedDate = tempPickedDate;
-                });
-                if (kDebugMode) {
-                  print('I selected $selectedDate');
-                }
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      );
-    },
-  );
-
-  if (kDebugMode) {
-    print('I selected $selectedDate');
+              CupertinoButton(
+                child: const Text(
+                  'OK',
+                  style: TextStyle(
+                    fontFamily: 'OtomanopeeOne',
+                    fontSize: 20.0,
+                    color: Color(0xFF726662),
+                  ),
+                ),
+                onPressed: () {
+                  ref.read(selectedDateProvider.notifier).state =
+                      tempPickedDate;
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
-}
 
-
-  //Adding the birthday to the list
-  Future<void> _addBirthday(BuildContext context) async {
+  Future<void> _addBirthday(BuildContext context, String uid) async {
+    final selectedDate = ref.read(selectedDateProvider);
+    String name = ref.read(nameProvider.notifier).state;
     if (name.isNotEmpty && selectedDate != null) {
-      print(
-          'Birthday added: Name - $name, Date - $selectedDate  , notify: $notify');
-      Navigator.of(context).pop();
-      _checkPermissions();
-      // Schedule notification if permission granted
-      if (selectedDate != null) {
-        _scheduleBirthdayNotifications(
-            Birthday(name: name, date: selectedDate!));
-        print('hiiiiii');
-      }
-      setState(() {
-        birthdayList.add(Birthday(name: name, date: selectedDate!));
-        name = '';
-        selectedDate = null;
-      });
+      final familyNotifier = ref.read(familyNotifierProvider.notifier);
+      await familyNotifier.addBirthday(uid, name, selectedDate);
+
+      // Optionally, schedule a notification here
+      _scheduleBirthdayNotifications(
+          Birthday(name: name, date: selectedDate, id: ''));
+
+      // Reset name and selectedDate
+      ref.read(nameProvider.notifier).state = '';
+      ref.read(selectedDateProvider.notifier).state = null;
+      Navigator.pop(context);
     } else {
       // Show error dialog if fields are empty
       await showDialog(
@@ -274,12 +269,10 @@ class BirthdaysState extends State<Birthdays> {
     }
   }
 
-  //Deleting a birthday from the list
-  void _removeBirthday(int index) {
-    setState(() {
-      _cancelBirthdayNotification(birthdayList[index]);
-      birthdayList.removeAt(index);
-    });
+  Future<void> _removeBirthday(String uid, String birthdayDocId, DateTime date, String name) async {
+    final familyNotifier = ref.read(familyNotifierProvider.notifier);
+    await familyNotifier.removeBirthday(uid, birthdayDocId);
+    _cancelBirthdayNotification(Birthday(name: name, date: date, id: ''));
   }
 
   //Getting month name
@@ -439,6 +432,14 @@ class BirthdaysState extends State<Birthdays> {
     }
   }
 
+  String datetell() {
+    final selectedDate = ref.read(selectedDateProvider.notifier).state;
+    if (selectedDate != null) {
+      return '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}';
+    } else
+      return 'Select date';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -446,114 +447,118 @@ class BirthdaysState extends State<Birthdays> {
       appBar: const AppBarWidget(
         text: 'BIRTHDAYS',
         color: Color(0xFFF9CFFD),
-        back: Family(),
+        back: FamilyPage(),
       ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              //Creating a list to display all the birthdays
               Expanded(
-                child: ListView.builder(
-                  itemCount: birthdayList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    int age = birthdayList[index].date.month >
-                                DateTime.now().month ||
-                            (birthdayList[index].date.month ==
-                                    DateTime.now().month &&
-                                birthdayList[index].date.day >=
-                                    DateTime.now().day)
-                        ? DateTime.now().year - birthdayList[index].date.year
-                        : DateTime.now().year -
-                            birthdayList[index].date.year +
-                            1;
+                child: Consumer(
+                  builder: (context, watch, _) {
+                    final birthdayStream =
+                        ref.watch(birthdaysStreamProvider(user.uid));
+                    return birthdayStream.when(
+                      data: (birthdayList) {
+                        return ListView.builder(
+                          itemCount: birthdayList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final birthday = birthdayList[index];
+                            int age = birthday.date.month >
+                                        DateTime.now().month ||
+                                    (birthday.date.month ==
+                                            DateTime.now().month &&
+                                        birthday.date.day >= DateTime.now().day)
+                                ? DateTime.now().year - birthday.date.year
+                                : DateTime.now().year - birthday.date.year + 1;
 
-                    //Displaying how many days are left for birthday
-                    int days =
-                        birthdayList[index].date.month > DateTime.now().month ||
-                                (birthdayList[index].date.month ==
-                                        DateTime.now().month &&
-                                    birthdayList[index].date.day >=
-                                        DateTime.now().day)
-                            ? DateTime(
-                                    DateTime.now().year,
-                                    birthdayList[index].date.month,
-                                    birthdayList[index].date.day)
-                                .difference(DateTime.now())
-                                .inDays
-                            : DateTime(
-                                    DateTime.now().year + 1,
-                                    birthdayList[index].date.month,
-                                    birthdayList[index].date.day)
-                                .difference(DateTime.now())
-                                .inDays;
+                            int days = birthday.date.month >
+                                        DateTime.now().month ||
+                                    (birthday.date.month ==
+                                            DateTime.now().month &&
+                                        birthday.date.day >= DateTime.now().day)
+                                ? DateTime(DateTime.now().year,
+                                        birthday.date.month, birthday.date.day)
+                                    .difference(DateTime.now())
+                                    .inDays
+                                : DateTime(DateTime.now().year + 1,
+                                        birthday.date.month, birthday.date.day)
+                                    .difference(DateTime.now())
+                                    .inDays;
 
-                    return Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: ListTile(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadiusDirectional.circular(10),
-                        ),
-                        leading: (index % 2 == 0)
-                            ? Image.asset(
-                                'assets/images/birthday1.png',
-                                width: 25,
-                                height: 400,
-                              )
-                            : Image.asset(
-                                'assets/images/birthday2.png',
-                                width: 40,
-                                height: 500,
+                            return Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: ListTile(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadiusDirectional.circular(10),
+                                ),
+                                leading: (index % 2 == 0)
+                                    ? Image.asset(
+                                        'assets/images/birthday1.png',
+                                        width: 25,
+                                        height: 400,
+                                      )
+                                    : Image.asset(
+                                        'assets/images/birthday2.png',
+                                        width: 40,
+                                        height: 500,
+                                      ),
+                                trailing: IconButton(
+                                  onPressed: () {
+                                    print(birthday.id);
+                                    _removeBirthday(user.uid, birthday.id, birthday.date, birthday.name);
+                                  },
+                                  icon: const Icon(Icons.delete),
+                                ),
+                                tileColor: Color(
+                                        (Random().nextDouble() * 0xFFFFFF)
+                                            .toInt())
+                                    .withOpacity(0.3),
+                                title: Text(
+                                  birthday.name,
+                                  style: const TextStyle(
+                                    fontFamily: 'OtomanopeeOne',
+                                    fontSize: 25.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF726662),
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                subtitle: Column(
+                                  children: [
+                                    Text(
+                                      '${birthday.date.day} ${getMonthName(birthday.date.month)} ${birthday.date.year}',
+                                      style: const TextStyle(
+                                        fontFamily: 'OtomanopeeOne',
+                                        fontSize: 20.0,
+                                        color: Color(0xFF726662),
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Text(
+                                      '$age years old in $days days',
+                                      style: const TextStyle(
+                                        fontFamily: 'OtomanopeeOne',
+                                        fontSize: 15.0,
+                                        color: Color(0xFF726662),
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
                               ),
-                        trailing: IconButton(
-                          onPressed: () {
-                            _removeBirthday(index);
+                            );
                           },
-                          icon: const Icon(Icons.delete),
-                        ),
-                        tileColor:
-                            Color((Random().nextDouble() * 0xFFFFFF).toInt())
-                                .withOpacity(0.3),
-                        title: Text(
-                          birthdayList[index].name,
-                          style: const TextStyle(
-                            fontFamily: 'OtomanopeeOne',
-                            fontSize: 25.0,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF726662),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        subtitle: Column(
-                          children: [
-                            Text(
-                              '${birthdayList[index].date.day} ${getMonthName(birthdayList[index].date.month)} ${birthdayList[index].date.year}',
-                              style: const TextStyle(
-                                fontFamily: 'OtomanopeeOne',
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF726662),
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            Text(
-                              'Will turn $age in $days days',
-                              style: const TextStyle(
-                                fontFamily: 'OtomanopeeOne',
-                                fontSize: 17.0,
-                                color: Color(0xFF726662),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                        );
+                      },
+                      loading: () => const CircularProgressIndicator(),
+                      error: (error, stack) => Text('Error: $error'),
                     );
                   },
                 ),
               ),
-
-              //Option of adding a new birthday
               Align(
                 alignment: Alignment.bottomRight,
                 child: FloatingActionButton(
@@ -562,7 +567,6 @@ class BirthdaysState extends State<Birthdays> {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        //Alert Dialog of adding birthday and it asks for name and date
                         return AlertDialog(
                           title: const Text(
                             'Add Birthday',
@@ -575,7 +579,6 @@ class BirthdaysState extends State<Birthdays> {
                           content: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              //Adding a name
                               TextField(
                                 decoration: const InputDecoration(
                                   labelText: 'Name',
@@ -586,13 +589,10 @@ class BirthdaysState extends State<Birthdays> {
                                   ),
                                 ),
                                 onChanged: (value) {
-                                  setState(() {
-                                    name = value;
-                                  });
+                                  ref.read(nameProvider.notifier).state = value;
                                 },
                               ),
                               const SizedBox(height: 20),
-                              //Selecting a date
                               Row(
                                 children: [
                                   const Text(
@@ -614,9 +614,7 @@ class BirthdaysState extends State<Birthdays> {
                                   ),
                                   const SizedBox(width: 20),
                                   Text(
-                                    selectedDate != null
-                                        ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
-                                        : 'Select date',
+                                    datetell(),
                                     style: const TextStyle(
                                       fontFamily: 'OtomanopeeOne',
                                       fontSize: 13.0,
@@ -628,14 +626,12 @@ class BirthdaysState extends State<Birthdays> {
                             ],
                           ),
                           actions: <Widget>[
-                            //Cancel
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
-                                setState(() {
-                                  name = '';
-                                  selectedDate = null;
-                                });
+                                ref.read(nameProvider.notifier).state = '';
+                                ref.read(selectedDateProvider.notifier).state =
+                                    null;
                               },
                               child: const Text(
                                 'Cancel',
@@ -646,10 +642,10 @@ class BirthdaysState extends State<Birthdays> {
                                 ),
                               ),
                             ),
-                            //Add Birthday
                             TextButton(
                               onPressed: () {
-                                _addBirthday(context);
+                                _addBirthday(context, user.uid);
+                            
                               },
                               child: const Text(
                                 'Add',

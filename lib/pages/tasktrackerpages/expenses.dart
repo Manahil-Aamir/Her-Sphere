@@ -1,7 +1,6 @@
 import 'package:pie_chart/pie_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:hersphere/pages/impwidgets/appbar.dart';
-import 'package:hersphere/pages/tasktrackerpages/task.dart';
 import 'package:hersphere/pages/tasktrackerpages/tasktracker.dart';
 
 class Expenses extends StatefulWidget {
@@ -214,11 +213,11 @@ class _ExpensesState extends State<Expenses> {
                 legendPosition: LegendPosition.right,
                 showLegends: true,
                 legendShape: BoxShape.circle,
-                legendTextStyle: const TextStyle(
+                legendTextStyle: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              chartValuesOptions: ChartValuesOptions(
+              chartValuesOptions: const ChartValuesOptions(
                 showChartValues: true,
                 showChartValuesInPercentage: true,
                 showChartValuesOutside: false,
