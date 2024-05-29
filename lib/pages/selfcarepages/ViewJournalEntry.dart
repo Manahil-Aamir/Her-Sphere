@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:hersphere/pages/selfcarepages/entry.dart';
+import 'package:hersphere/models/journalmodel.dart';
+import 'package:intl/intl.dart';
 
 class ViewJournalEntry extends StatelessWidget {
-  final Entry journal;
+  final JournalModel journal;
 
   const ViewJournalEntry({Key? key, required this.journal}) : super(key: key);
+
+  String formatDate(DateTime date) {
+  // Define the date format
+  final DateFormat formatter = DateFormat('dd/MM/yyyy');
+  
+  // Format the date
+  return formatter.format(date);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +33,7 @@ class ViewJournalEntry extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              journal.date,
+              formatDate(journal.date),
               style: const TextStyle(
                 fontFamily: 'Times New Roman',
                 fontSize: 19.0,
@@ -34,7 +43,7 @@ class ViewJournalEntry extends StatelessWidget {
             ),
             Expanded(
               child: Text(
-                journal.entry,
+                journal.name,
                 style: const TextStyle(
                   fontFamily: 'Times New Roman',
                   fontSize: 15.0,

@@ -1,182 +1,201 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hersphere/pages/impwidgets/appbar.dart';
-import 'package:hersphere/pages/tasktrackerpages/task.dart';
 import 'package:hersphere/pages/tasktrackerpages/tasktracker.dart';
+import 'package:hersphere/providers/taskinstance_provider.dart';
+import 'package:hersphere/providers/taskstream_provider.dart';
+import 'package:hersphere/repository/taskservice.dart';
 
 
-class ToDo extends StatefulWidget {
+class ToDo extends ConsumerStatefulWidget {
   const ToDo({Key? key}) : super(key: key);
 
   @override
-  State<ToDo> createState() => _ToDoState();
-
+  ConsumerState<ToDo> createState() => _ToDoState();
 }
 
-class _ToDoState extends State<ToDo> {
+class _ToDoState extends ConsumerState<ToDo> {
+  late TextEditingController _textEditingController;
+  late TaskService _taskService;
+  String task = '';
+  final user = FirebaseAuth.instance.currentUser!;
 
-  //List that will hold all ToDo
-  // ignore: non_constant_identifier_names
-  List <Task> ToDoList = [];
-  String t = '';
-  
-  //Adding a new task in todo list
-  void _addTask (String str) { 
-    if(str!=''){
-    setState((){
-      ToDoList.add(Task(task: str, checked: false));
-    });
-    Navigator.pop(context);
-    }
-  }
-
-  //Removing a task in todo list
-  void _removeTask (int index) { 
-    setState((){
-      ToDoList.removeAt(index);
-    });
+  @override
+  void initState() {
+    super.initState();
+    _textEditingController = TextEditingController();
+    _taskService = ref.read(taskServiceProvider);
   }
 
   @override
-  Widget build(BuildContext context){
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
+  void _addTask(String str) {
+    if (str.isNotEmpty) {
+      _taskService.addToDo(user.uid, str, false); // Initially unchecked
+      _textEditingController.clear();
+    }
+  }
+
+  void _removeTask(String taskId, String todoDocId) {
+    _taskService.removeToDo(taskId, todoDocId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFB5EFFC),
-      appBar: const AppBarWidget(text: 'TODo List', color: Color(0xFFB5EFFC), back: TaskTracker(),),
+      appBar: const AppBarWidget(
+        text: 'TO-Do',
+        color: Color(0xFFB5EFFC),
+        back: TaskTracker(),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            //Creating a list to display all the tasks
-              Expanded(
-                child: ListView.builder(
-                  itemCount: ToDoList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(5.0),
-
-                      //List of all the tasks
-                      child: ListTile(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadiusDirectional.circular(10),
-                        ),
-                        leading: Checkbox(
-                          value: ToDoList[index].checked, 
-                          onChanged: (newValue) {
-                            setState(() {
-                              ToDoList[index].checked = !ToDoList[index].checked;
-                            });
-                          }
-                        ),
-                          trailing: IconButton(
-                          onPressed: () {
-                            _removeTask(index);
-                          },
-                          icon: const Icon(Icons.delete),
-                        ),
-                        tileColor: Colors.white,
-                        //Displayig task on basis of wheteher its checked or not
-                        title: Text(
-                          ToDoList[index].task,
-                          style: TextStyle(
-                            fontFamily: 'OtomanopeeOne',
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF726662),
-                            decoration: ToDoList[index].checked ? TextDecoration.lineThrough  : TextDecoration.none,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-               Align(
-                alignment: Alignment.bottomRight,
-                child: FloatingActionButton(
-                  backgroundColor: Colors.white,
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-
-                        //Alert Dialog of adding task
-                        return AlertDialog(
-                          title: const Text(
-                            'Add Task',
-                            style: TextStyle(
-                              fontFamily: 'OtomanopeeOne',
-                              fontSize: 20.0,
-                              color: Color(0xFF726662),
-                            ),
-                          ),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              //Entering task and limit is of 30 characters
-                              TextField(
-                                maxLength: 30,
-                                decoration: const InputDecoration(
-                                  labelText: 'Add New To-Do',
-                                  labelStyle: TextStyle(
-                                    fontFamily: 'OtomanopeeOne',
-                                    fontSize: 13.0,
-                                    color: Color(0xFF726662),
-                                  ),
-                                ),
+            Expanded(
+              child: Consumer(
+                builder: (context, ref, child) {
+                  final toDosAsyncValue = ref.watch(toDosStreamProvider(user.uid));
+                  return toDosAsyncValue.when(
+                    data: (toDos) {
+                      return ListView.builder(
+                        itemCount: toDos.length,
+                        itemBuilder: (context, index) {
+                          final task = toDos[index];
+                          return Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: ListTile(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              leading: Checkbox(
+                                value: task.check,
                                 onChanged: (value) {
-                                  setState(() {
-                                    t = value;
-                                  });
+                                  _taskService.updateToDoChecked(task.id, !task.check);
+                                  ref.refresh(toDosStreamProvider(user.uid));
                                 },
                               ),
-                            ],
+                              trailing: IconButton(
+                                onPressed: () {
+                                  _removeTask(user.uid, task.id);
+                                },
+                                icon: const Icon(Icons.delete),
+                              ),
+                              tileColor: Colors.white,
+                              title: Text(
+                                task.data,
+                                style: TextStyle(
+                                  fontFamily: 'OtomanopeeOne',
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF726662),
+                                  decoration: task.check ? TextDecoration.lineThrough : TextDecoration.none,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (error, stack) => Text('Error: $error'),
+                  );
+                },
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: FloatingActionButton(
+                backgroundColor: Colors.white,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text(
+                          'Add Task',
+                          style: TextStyle(
+                            fontFamily: 'OtomanopeeOne',
+                            fontSize: 20.0,
+                            color: Color(0xFF726662),
                           ),
-                          //Cancel Button
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
+                        ),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            TextField(
+                              controller: _textEditingController,
+                              maxLength: 30,
+                              decoration: const InputDecoration(
+                                labelText: 'Add New To-Do',
+                                labelStyle: TextStyle(
+                                  fontFamily: 'OtomanopeeOne',
+                                  fontSize: 13.0,
+                                  color: Color(0xFF726662),
+                                ),
+                              ),
+                              onChanged: (value) {
                                 setState(() {
-                                  t = '';
+                                  task = value;
                                 });
                               },
-                              child: const Text(
-                                'Cancel',
-                                style: TextStyle(
-                                  fontFamily: 'OtomanopeeOne',
-                                  fontSize: 15.0,
-                                  color: Color(0xFF726662),
-                                ),
-                              ),
-                            ),
-                            //Adding a task
-                            TextButton(
-                              onPressed: () {
-                                _addTask(t);
-                              },
-                              child: const Text(
-                                'Add',
-                                style: TextStyle(
-                                  fontFamily: 'OtomanopeeOne',
-                                  fontSize: 15.0,
-                                  color: Color(0xFF726662),
-                                ),
-                              ),
                             ),
                           ],
-                        );
-                      },
-                    );
-                  },
-                  child: const Icon(
-                    Icons.add,
-                    color: Color(0xFF726662),
-                  ),
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              _textEditingController.clear();
+                              setState(() {
+                                task = '';
+                              });
+                            },
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(
+                                fontFamily: 'OtomanopeeOne',
+                                fontSize: 15.0,
+                                color: Color(0xFF726662),
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              _addTask(task);
+                              Navigator.pop(context);
+                            },
+                            child: const Text(
+                              'Add',
+                              style: TextStyle(
+                                fontFamily: 'OtomanopeeOne',
+                                fontSize: 15.0,
+                                color: Color(0xFF726662),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: const Icon(
+                  Icons.add,
+                  color: Color(0xFF726662),
                 ),
               ),
-              ],
-        ))
+            ),
+          ],
+        ),
+      ),
     );
   }
-
 }
+

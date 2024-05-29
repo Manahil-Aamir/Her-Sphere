@@ -7,7 +7,8 @@ class FamilyService {
 
   // Check if a family document exists by UID
   Future<bool> _familyExists(String uid) async {
-    DocumentSnapshot doc = await _firestore.collection('families').doc(uid).get();
+    DocumentSnapshot doc =
+        await _firestore.collection('families').doc(uid).get();
     return doc.exists;
   }
 
@@ -15,7 +16,8 @@ class FamilyService {
   Future<void> addOrUpdateFamily(Family family) async {
     try {
       bool exists = await _familyExists(family.uid);
-      DocumentReference familyDoc = _firestore.collection('families').doc(family.uid);
+      DocumentReference familyDoc =
+          _firestore.collection('families').doc(family.uid);
 
       if (exists) {
         // If the document exists, update the fields
@@ -83,7 +85,8 @@ class FamilyService {
 
   // Add a birthday document ID to the family document and the birthday collection
   Future<void> addBirthday(String uid, String name, DateTime date) async {
-    DocumentReference birthdayDoc = await _firestore.collection('birthdays').add({
+    DocumentReference birthdayDoc =
+        await _firestore.collection('birthdays').add({
       'name': name,
       'date': date,
     });
@@ -114,41 +117,41 @@ class FamilyService {
   }
 
   // Remove a birthday document ID from the family document
-  Future<void> removeBirthdayDocumentId(String uid, String birthdayDocId) async {
-  bool familyExists = await _familyExists(uid);
+  Future<void> removeBirthdayDocumentId(
+      String uid, String birthdayDocId) async {
+    bool familyExists = await _familyExists(uid);
 
-  if (familyExists) {
-    try {
-      await _firestore.collection('families').doc(uid).update({
-        'birthdayDocumentIds': FieldValue.arrayRemove([birthdayDocId])
-      });
-    } catch (e) {
-      print('Error removing birthday document ID from family document: $e');
+    if (familyExists) {
+      try {
+        await _firestore.collection('families').doc(uid).update({
+          'birthdayDocumentIds': FieldValue.arrayRemove([birthdayDocId])
+        });
+      } catch (e) {
+        print('Error removing birthday document ID from family document: $e');
+        return;
+      }
+    } else {
+      print('Family document does not exist for UID: $uid');
       return;
     }
-  } else {
-    print('Family document does not exist for UID: $uid');
-    return;
-  }
 
-  try {
-    await _firestore.collection('birthdays').doc(birthdayDocId).delete();
-  } catch (e) {
-    print('Error removing birthday document: $e');
-    return;
+    try {
+      await _firestore.collection('birthdays').doc(birthdayDocId).delete();
+    } catch (e) {
+      print('Error removing birthday document: $e');
+      return;
+    }
   }
-}
 
   // Get Family document as a stream
-Stream<List<Family>> getFamily(String uid) {
-  return _firestore.collection('families').snapshots().map((snapshot) {
-    return snapshot.docs.map((doc) => Family.fromQuerySnapshot(doc)).toList();
-  });
-}
+  Stream<List<Family>> getFamily(String uid) {
+    return _firestore.collection('families').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => Family.fromQuerySnapshot(doc)).toList();
+    });
+  }
 
-
-    // Get Family document as a stream
-  Stream<List<Family>> getAllFamily(){
+  // Get Family document as a stream
+  Stream<List<Family>> getAllFamily() {
     return _firestore.collection('families').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         return Family.fromQuerySnapshot(doc);
@@ -157,19 +160,20 @@ Stream<List<Family>> getFamily(String uid) {
   }
 
   // Get numbers as a stream
-Stream<List<int>> getNumbers(String uid) {
-  return _firestore.collection('families').doc(uid).snapshots().map((doc) {
-    final data = doc.data();
-    if (data == null || data['numbers'] == null) {
-      return <int>[]; // Return an empty list if no data or 'numbers' field is found
-    }
-    return List<int>.from(data['numbers']);
-  });
-}
+  Stream<List<int>> getNumbers(String uid) {
+    return _firestore.collection('families').doc(uid).snapshots().map((doc) {
+      final data = doc.data();
+      if (data == null || data['numbers'] == null) {
+        return <int>[]; // Return an empty list if no data or 'numbers' field is found
+      }
+      return List<int>.from(data['numbers']);
+    });
+  }
 
- Future<List<int>> getNumberList(String uid) async {
+  Future<List<int>> getNumberList(String uid) async {
     try {
-      final docSnapshot = await _firestore.collection('families').doc(uid).get();
+      final docSnapshot =
+          await _firestore.collection('families').doc(uid).get();
       final data = docSnapshot.data();
       if (data == null || data['numbers'] == null) {
         return <int>[]; // Return an empty list if no data or 'numbers' field is found
@@ -181,54 +185,55 @@ Stream<List<int>> getNumbers(String uid) {
     }
   }
 
-
-
 // Get photo URLs as a stream
-Stream<List<String>> getPhotoUrls(String uid) {
-  return _firestore.collection('families').doc(uid).snapshots().map((doc) {
-    if (doc.exists && doc.data() != null && doc.data()!.containsKey('photoUrls')) {
-      return List<String>.from(doc['photoUrls']);
-    } else {
-      return []; // Return an empty list if the field doesn't exist or is null
-    }
-  });
-}
-
+  Stream<List<String>> getPhotoUrls(String uid) {
+    return _firestore.collection('families').doc(uid).snapshots().map((doc) {
+      if (doc.exists &&
+          doc.data() != null &&
+          doc.data()!.containsKey('photoUrls')) {
+        return List<String>.from(doc['photoUrls']);
+      } else {
+        return []; // Return an empty list if the field doesn't exist or is null
+      }
+    });
+  }
 
 // Stream to get birthdays
-Stream<List<Birthday>> getBirthdays(String uid) {
-  return _firestore.collection('families').doc(uid).snapshots().asyncMap((doc) async {
-    if (doc.exists && doc.data() != null && doc.data()!.containsKey('birthdayDocumentIds')) {
-      List<String> birthdayIds = List<String>.from(doc['birthdayDocumentIds'] ?? []);
-      if (birthdayIds.isEmpty) {
-        return [];
-      }
+  Stream<List<Birthday>> getBirthdays(String uid) {
+    return _firestore
+        .collection('families')
+        .doc(uid)
+        .snapshots()
+        .asyncMap((doc) async {
+      if (doc.exists &&
+          doc.data() != null &&
+          doc.data()!.containsKey('birthdayDocumentIds')) {
+        List<String> birthdayIds =
+            List<String>.from(doc['birthdayDocumentIds'] ?? []);
+        if (birthdayIds.isEmpty) {
+          return [];
+        }
 
-      // Fetch birthday data for each ID
-      List<Birthday> birthdays = [];
-      for (String id in birthdayIds) {
-        DocumentSnapshot birthdayDoc = await _firestore.collection('birthdays').doc(id).get();
-        if (birthdayDoc.exists) {
-          Map<String, dynamic> data = birthdayDoc.data() as Map<String, dynamic>;
-          birthdays.add(
-            Birthday(
+        // Fetch birthday data for each ID
+        List<Birthday> birthdays = [];
+        for (String id in birthdayIds) {
+          DocumentSnapshot birthdayDoc =
+              await _firestore.collection('birthdays').doc(id).get();
+          if (birthdayDoc.exists) {
+            Map<String, dynamic> data =
+                birthdayDoc.data() as Map<String, dynamic>;
+            birthdays.add(Birthday(
               id: birthdayDoc.id, // Retrieve the document ID here
               name: data['name'] as String,
               date: (data['date'] as Timestamp).toDate(),
-            )
-          );
+            ));
+          }
         }
+
+        return birthdays;
+      } else {
+        return []; // Return an empty list if the field doesn't exist or is null
       }
-
-      return birthdays;
-    } else {
-      return []; // Return an empty list if the field doesn't exist or is null
-    }
-  });
-}
-
-
-
-
-
+    });
+  }
 }
