@@ -1,5 +1,6 @@
 
 import 'package:hersphere/models/journalmodel.dart';
+import 'package:hersphere/models/selfcaremodel.dart';
 import 'package:hersphere/providers/selfcareinstance_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -15,4 +16,10 @@ Stream<List<JournalModel>> journalsStream(JournalsStreamRef ref, String uid) {
 Stream<List<bool>> checkedStream(CheckedStreamRef ref, String uid) {
   final selfCareService = ref.watch(selfcareServiceProvider);
   return selfCareService.getCheckedStream(uid);
+}
+
+@riverpod
+Stream<SelfCareModel> hydrationStream(HydrationStreamRef ref, String uid) {
+  final selfCareService = ref.watch(selfcareServiceProvider);
+  return selfCareService.getSelfCareWithoutJournalAndChecked(uid);
 }

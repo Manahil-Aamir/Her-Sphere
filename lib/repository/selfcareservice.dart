@@ -275,6 +275,25 @@ Stream<List<bool>> getCheckedStream(String uid) {
     }
   }
 
+  //Stream to get all info for hydration
+  Stream<SelfCareModel> getSelfCareWithoutJournalAndChecked(String uid) {
+    return _firestore.collection('selfcare').doc(uid).snapshots().map((snapshot) {
+      if (snapshot.exists && snapshot.data() != null) {
+        return SelfCareModel.fromQuerySnapshot(snapshot);
+      } else {
+        // Return a default SelfCareModel if the document doesn't exist
+        return SelfCareModel(
+          uid: uid,
+          id: '',
+          sleep: DateTime.now(),
+          wakeup: DateTime.now(),
+          notify: false, 
+          journalDocumentIds: [],
+        );
+      }
+    });
+  }
+
   // Stream to get journals
   Stream<List<JournalModel>> getJournals(String uid) {
     return _firestore

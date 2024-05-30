@@ -6,6 +6,7 @@ import 'package:hersphere/pages/impwidgets/appbar.dart';
 import 'package:hersphere/pages/selfcarepages/selfcare.dart';
 import 'package:hersphere/providers/selfcare_provider.dart';
 import 'package:hersphere/providers/selfcarefuture_provider.dart';
+import 'package:hersphere/providers/selfcarestream_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tzdata;
@@ -19,6 +20,8 @@ class Hydration extends ConsumerStatefulWidget {
 
 class _HydrationState extends ConsumerState<Hydration> {
   final user = FirebaseAuth.instance.currentUser!;
+  List<int> hydrationNotificationIds = List.generate(8, (index) => 1000 + index);
+
 
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   bool isInitialized = false;
@@ -171,7 +174,7 @@ class _HydrationState extends ConsumerState<Hydration> {
       print(notificationTime);
       // Schedule notification
       await flutterLocalNotificationsPlugin.zonedSchedule(
-        i,
+        hydrationNotificationIds[i],
         'Notification ${i + 1}',
         'Drink Water',
         _nextInstanceOfTime(notificationTime),
@@ -208,55 +211,28 @@ class _HydrationState extends ConsumerState<Hydration> {
     }
 
     // Cancel all scheduled notifications
-    await flutterLocalNotificationsPlugin.cancelAll();
+    for (int id in hydrationNotificationIds) {
+    await flutterLocalNotificationsPlugin.cancel(id);
+  }
   }
 
 final startProvider = StateProvider<TimeOfDay>((ref) => TimeOfDay.now());
 final endProvider = StateProvider<TimeOfDay>((ref) => TimeOfDay.now());
 final switchValueProvider = StateProvider<bool>((ref) => false);
 
-  Future<void> _initializeVariables() async {
-    try {
-      // Fetch wakeup time
-      final DateTime? wakeupTime =
-          await ref.watch(WakeupProvider(user.uid).future);
-      // Fetch sleep time
-      final DateTime? sleepTime =
-          await ref.watch(SleepProvider(user.uid).future);
-      // Fetch notify value
-      final bool notifyValue =
-          await ref.watch(NotifyProvider(user.uid).future) ?? false;
-
-      // Initialize start and end time with fetched values
-      ref.read(startProvider.notifier).state = wakeupTime != null
-          ? TimeOfDay.fromDateTime(wakeupTime)
-          : TimeOfDay.now();
-      ref.read(endProvider.notifier).state = sleepTime != null
-          ? TimeOfDay.fromDateTime(sleepTime)
-          : TimeOfDay.now();
-      // Initialize _switchValue with fetched notify value
-      ref.read(switchValueProvider.notifier).state = notifyValue;
-    } catch (error) {
-      print('Error initializing variables: $error');
-      // Handle error
-    }
-  }
-
-//Editting the sleep and wakeup time
-  void _editTime(bool wakeup, bool sleep) async {
+void _editTime(bool wakeup, bool sleep) async {
     TimeOfDay initialTime = TimeOfDay.now();
     TimeOfDay? pickedTime = await showTimePicker(
       context: context,
       initialTime: initialTime,
       builder: (BuildContext context, Widget? child) {
-        //Modifying the theme of TimePicker
+        // Modifying the theme of TimePicker
         return Theme(
           data: ThemeData(
             timePickerTheme: TimePickerThemeData(
               dayPeriodColor: const Color(0xFFBCF7C5),
               dayPeriodTextColor: const Color(0xFF726662),
-              dayPeriodTextStyle:
-                  const TextStyle(color: const Color(0xFF726662)),
+              dayPeriodTextStyle: const TextStyle(color: const Color(0xFF726662)),
               dialHandColor: const Color(0xFFBCF7C5),
               dialTextColor: const Color(0xFF726662),
               dialTextStyle: const TextStyle(color: Colors.indigo),
@@ -266,17 +242,17 @@ final switchValueProvider = StateProvider<bool>((ref) => false);
               hourMinuteTextColor: const Color(0xFF726662),
               hourMinuteTextStyle: const TextStyle(color: Colors.lightBlue),
               inputDecorationTheme: const InputDecorationTheme(
-                  fillColor: const Color(0xFFBCF7C5)),
+                fillColor: const Color(0xFFBCF7C5),
+              ),
               padding: const EdgeInsets.all(10.0),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0)),
+                borderRadius: BorderRadius.circular(30.0),
+              ),
               confirmButtonStyle: ButtonStyle(
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(const Color(0xFF726662)),
+                foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF726662)),
               ),
               cancelButtonStyle: ButtonStyle(
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(const Color(0xFF726662)),
+                foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF726662)),
               ),
             ),
           ),
@@ -284,63 +260,54 @@ final switchValueProvider = StateProvider<bool>((ref) => false);
         );
       },
     );
-    TimeOfDay start = ref.read(startProvider.notifier).state;
-    TimeOfDay end = ref.read(endProvider.notifier).state;
 
     if (pickedTime != null) {
+      final start = ref.read(startProvider.notifier).state;
+      final end = ref.read(endProvider.notifier).state;
+      
       if (wakeup && end != pickedTime) {
-        ref
-            .read(selfCareNotifierProvider.notifier)
-            .updateWakeupTime(user.uid, pickedTime);
+        ref.read(selfCareNotifierProvider.notifier).updateWakeupTime(user.uid, pickedTime);
         if (ref.read(switchValueProvider.notifier).state) {
           cancelAllNotifications();
           scheduleNotifications(start, end);
         }
       } else if (sleep && start != pickedTime) {
-        ref
-            .read(selfCareNotifierProvider.notifier)
-            .updateSleepTime(user.uid, pickedTime);
+        ref.read(selfCareNotifierProvider.notifier).updateSleepTime(user.uid, pickedTime);
         if (ref.read(switchValueProvider.notifier).state) {
           cancelAllNotifications();
           scheduleNotifications(start, end);
         }
       }
     }
-     _initializeVariables();
-     setState(() {
-            });
-  }
-
-  String StartDate(){
-    TimeOfDay start = ref.read(startProvider.notifier).state;
-    print('${start.hour}:${start.minute}');
-    return '${start.hour}:${start.minute}';
-  }
-
-    String EndDate(){
-    TimeOfDay end = ref.read(endProvider.notifier).state;
-    return '${end.hour}:${end.minute}';
   }
 
   @override
   Widget build(BuildContext context) {
-    TimeOfDay start = ref.watch(startProvider.notifier).state;
-    TimeOfDay end = ref.watch(endProvider.notifier).state;
-    print(end);
-    _initializeVariables();
-    return Scaffold(
-        backgroundColor: const Color(0xFFBCF7C5),
-        appBar: const AppBarWidget(
-          text: 'Hydration Reminder',
-          color: Color(0xFFBCF7C5),
-          back: SelfCare(),
-        ),
-        body: Padding(
+    final hydrationStream = ref.watch(hydrationStreamProvider(user.uid));
+
+    return hydrationStream.when(
+      data: (selfCareModel) {
+        print('hi');
+        final start = TimeOfDay.fromDateTime(selfCareModel.wakeup);
+        final end = TimeOfDay.fromDateTime(selfCareModel.sleep);
+        final notify = selfCareModel.notify;
+        //ref.read(startProvider.notifier).state = start;
+        //ref.read(endProvider.notifier).state = end;
+        //ref.read(switchValueProvider.notifier).state = notify;
+
+        return Scaffold(
+          backgroundColor: const Color(0xFFBCF7C5),
+          appBar: const AppBarWidget(
+            text: 'Hydration Reminder',
+            color: Color(0xFFBCF7C5),
+            back: SelfCare(),
+          ),
+          body: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                //Toggle button to enable/disable notifications
+                // Toggle button to enable/disable notifications
                 Row(
                   children: [
                     const Text(
@@ -353,20 +320,10 @@ final switchValueProvider = StateProvider<bool>((ref) => false);
                       ),
                     ),
                     Switch(
-                      value: ref.read(switchValueProvider.notifier).state,
+                      value: notify,
                       onChanged: (value) {
-                        print('hi');
-                        print(ref.read(switchValueProvider.notifier).state);
-                        print('value');
-                        print(value);
-
-                        ref
-                            .read(selfCareNotifierProvider.notifier)
-                            .updateNotify(user.uid, value);
-                            ref.read(switchValueProvider.notifier).state =  value;
-                        if (ref.read(switchValueProvider.notifier).state) scheduleNotifications(start, end);
-                        print('notify');
-                         print(ref.read(switchValueProvider.notifier).state);
+                        ref.read(selfCareNotifierProvider.notifier).updateNotify(user.uid, value);
+                        if (value) scheduleNotifications(start, end);
                       },
                     ),
                     const Text(
@@ -381,7 +338,7 @@ final switchValueProvider = StateProvider<bool>((ref) => false);
                   ],
                 ),
                 const SizedBox(height: 30.0),
-                //Setting the wakeup time
+                // Setting the wakeup time
                 Row(
                   children: [
                     const Text(
@@ -401,7 +358,7 @@ final switchValueProvider = StateProvider<bool>((ref) => false);
                         color: Colors.white,
                       ),
                       child: Text(
-                        StartDate(),
+                        '${start.hour}:${start.minute}',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontFamily: 'OtomanopeeOne',
@@ -424,7 +381,7 @@ final switchValueProvider = StateProvider<bool>((ref) => false);
                   ],
                 ),
                 const SizedBox(height: 30.0),
-                //Setting the sleep time
+                // Setting the sleep time
                 Row(
                   children: [
                     const Text(
@@ -444,7 +401,7 @@ final switchValueProvider = StateProvider<bool>((ref) => false);
                         color: Colors.white,
                       ),
                       child: Text(
-                        EndDate(),
+                        '${end.hour}:${end.minute}',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontFamily: 'OtomanopeeOne',
@@ -467,6 +424,12 @@ final switchValueProvider = StateProvider<bool>((ref) => false);
                   ],
                 ),
               ],
-            )));
+            ),
+          ),
+        );
+      },
+      loading: () => Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(child: Text('Error: $error')),
+    );
   }
 }

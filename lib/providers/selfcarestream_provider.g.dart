@@ -284,5 +284,134 @@ class _CheckedStreamProviderElement
   @override
   String get uid => (origin as CheckedStreamProvider).uid;
 }
+
+String _$hydrationStreamHash() => r'554940ad587b8dc54d19e0afd7aa24d62809e1f8';
+
+/// See also [hydrationStream].
+@ProviderFor(hydrationStream)
+const hydrationStreamProvider = HydrationStreamFamily();
+
+/// See also [hydrationStream].
+class HydrationStreamFamily extends Family<AsyncValue<SelfCareModel>> {
+  /// See also [hydrationStream].
+  const HydrationStreamFamily();
+
+  /// See also [hydrationStream].
+  HydrationStreamProvider call(
+    String uid,
+  ) {
+    return HydrationStreamProvider(
+      uid,
+    );
+  }
+
+  @override
+  HydrationStreamProvider getProviderOverride(
+    covariant HydrationStreamProvider provider,
+  ) {
+    return call(
+      provider.uid,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'hydrationStreamProvider';
+}
+
+/// See also [hydrationStream].
+class HydrationStreamProvider extends AutoDisposeStreamProvider<SelfCareModel> {
+  /// See also [hydrationStream].
+  HydrationStreamProvider(
+    String uid,
+  ) : this._internal(
+          (ref) => hydrationStream(
+            ref as HydrationStreamRef,
+            uid,
+          ),
+          from: hydrationStreamProvider,
+          name: r'hydrationStreamProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$hydrationStreamHash,
+          dependencies: HydrationStreamFamily._dependencies,
+          allTransitiveDependencies:
+              HydrationStreamFamily._allTransitiveDependencies,
+          uid: uid,
+        );
+
+  HydrationStreamProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.uid,
+  }) : super.internal();
+
+  final String uid;
+
+  @override
+  Override overrideWith(
+    Stream<SelfCareModel> Function(HydrationStreamRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: HydrationStreamProvider._internal(
+        (ref) => create(ref as HydrationStreamRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        uid: uid,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<SelfCareModel> createElement() {
+    return _HydrationStreamProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is HydrationStreamProvider && other.uid == uid;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, uid.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin HydrationStreamRef on AutoDisposeStreamProviderRef<SelfCareModel> {
+  /// The parameter `uid` of this provider.
+  String get uid;
+}
+
+class _HydrationStreamProviderElement
+    extends AutoDisposeStreamProviderElement<SelfCareModel>
+    with HydrationStreamRef {
+  _HydrationStreamProviderElement(super.provider);
+
+  @override
+  String get uid => (origin as HydrationStreamProvider).uid;
+}
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

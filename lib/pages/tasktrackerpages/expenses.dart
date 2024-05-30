@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hersphere/providers/task_provider.dart';
-import 'package:hersphere/providers/taskfuture_provider.dart';
 import 'package:hersphere/providers/taskstream_provider.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:flutter/material.dart';
@@ -145,6 +144,7 @@ class _ExpensesState extends ConsumerState<Expenses> {
         icon: const Icon(Icons.edit, color: Color(0xFF726662)),
         onPressed: () {
           _changeVal(context, attributeName.toLowerCase(), value);
+          print('hello');
         },
       ),
     );
