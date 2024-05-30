@@ -29,12 +29,11 @@ class Birthdays extends ConsumerStatefulWidget {
 class BirthdaysState extends ConsumerState<Birthdays> {
   final nameProvider = StateProvider<String>((ref) => '');
   final selectedDateProvider = StateProvider<DateTime?>((ref) => null);
-  List<Birthday> birthdayList = [];
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   bool notify = false;
   final user = FirebaseAuth.instance.currentUser!;
 
-// Function to initialize the local timezone
+  // Function to initialize the local timezone
   void initializeTimezone() {
     tzdata.initializeTimeZones();
     final location = tz.getLocation('Asia/Karachi');
@@ -146,6 +145,7 @@ class BirthdaysState extends ConsumerState<Birthdays> {
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
+  //Select date to schedule birthday
   Future<void> _selectDate(BuildContext context) async {
     DateTime? selectedDate =
         ref.read(selectedDateProvider.notifier).state ?? DateTime.now();
@@ -211,6 +211,7 @@ class BirthdaysState extends ConsumerState<Birthdays> {
     );
   }
 
+  //Add birthday
   Future<void> _addBirthday(BuildContext context, String uid) async {
     final selectedDate = ref.read(selectedDateProvider);
     String name = ref.read(nameProvider.notifier).state;
@@ -269,7 +270,9 @@ class BirthdaysState extends ConsumerState<Birthdays> {
     }
   }
 
-  Future<void> _removeBirthday(String uid, String birthdayDocId, DateTime date, String name) async {
+  //Remove a birthday
+  Future<void> _removeBirthday(
+      String uid, String birthdayDocId, DateTime date, String name) async {
     final familyNotifier = ref.read(familyNotifierProvider.notifier);
     await familyNotifier.removeBirthday(uid, birthdayDocId);
     _cancelBirthdayNotification(Birthday(name: name, date: date, id: ''));
@@ -294,7 +297,7 @@ class BirthdaysState extends ConsumerState<Birthdays> {
     return monthNames[month - 1];
   }
 
-// Schedule notifications only for the newly added birthday, 30 minutes before the birthday
+  // Schedule notifications only for the newly added birthday, 30 minutes before the birthday
   Future<void> _scheduleBirthdayNotifications(Birthday birthday) async {
     // Get today's date
     var today = DateTime.now();
@@ -336,7 +339,7 @@ class BirthdaysState extends ConsumerState<Birthdays> {
     try {
       // Schedule the notification 30 minutes before
       await flutterLocalNotificationsPlugin.zonedSchedule(
-        birthdayList.indexOf(birthday), // Use the index as the notification ID
+        birthday.hashCode, // Use the index as the notification ID
         'Birthday Reminder',
         '30 minutes before ${birthday.name}\'s birthday!',
         scheduledTimezoneDate,
@@ -354,7 +357,7 @@ class BirthdaysState extends ConsumerState<Birthdays> {
     }
   }
 
-// Schedule notifications only for the newly added birthday, 30 minutes before the birthday
+  // Schedule notifications only for the newly added birthday, 30 minutes before the birthday
   Future<void> _futureBirthdays(
       Birthday birthday, DateTime scheduleDate) async {
     Future.delayed(const Duration(
@@ -373,71 +376,92 @@ class BirthdaysState extends ConsumerState<Birthdays> {
       birthdayThisYear =
           DateTime(today.year + 1, birthday.date.month, birthday.date.day);
     }
+    // Subtract 30 minutes from the birthday date
+    var scheduledDate = birthdayThisYear.subtract(const Duration(minutes: 30));
 
-    if (birthdayList.contains(birthday)) {
-      // Subtract 30 minutes from the birthday date
-      var scheduledDate =
-          birthdayThisYear.subtract(const Duration(minutes: 30));
+    initializeTimezone();
+    // Get the current timezone of the mobile device
+    final String timeZoneName = tz.local.name;
 
-      initializeTimezone();
-      // Get the current timezone of the mobile device
-      final String timeZoneName = tz.local.name;
+    // Define the scheduled date for the notification using the current timezone
+    var scheduledTimezoneDate =
+        tz.TZDateTime.from(scheduledDate, tz.getLocation(timeZoneName));
 
-      // Define the scheduled date for the notification using the current timezone
-      var scheduledTimezoneDate =
-          tz.TZDateTime.from(scheduledDate, tz.getLocation(timeZoneName));
+    // Configure Android notification details
+    var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
+      'Channel name',
+      'Channel description',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
 
-      // Configure Android notification details
-      var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
-        'Channel name',
-        'Channel description',
-        importance: Importance.max,
-        priority: Priority.high,
+    // Create notification details
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    try {
+      // Schedule the notification
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        birthday.hashCode, // Use the index as the notification ID
+        'Birthday Reminder',
+        '30 minutes before ${birthday.name}\'s birthday!',
+        scheduledTimezoneDate,
+        platformChannelSpecifics,
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
       );
 
-      // Create notification details
-      var platformChannelSpecifics =
-          NotificationDetails(android: androidPlatformChannelSpecifics);
-
-      try {
-        // Schedule the notification
-        await flutterLocalNotificationsPlugin.zonedSchedule(
-          birthdayList
-              .indexOf(birthday), // Use the index as the notification ID
-          'Birthday Reminder',
-          '30 minutes before ${birthday.name}\'s birthday!',
-          scheduledTimezoneDate,
-          platformChannelSpecifics,
-          androidAllowWhileIdle: true,
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.absoluteTime,
-        );
-
-        print(
-            'Notification scheduled successfully for ${birthday.name} at ${scheduledDate}');
-        _futureBirthdays(birthday, scheduleDate);
-      } catch (e) {
-        print('Error scheduling notification: $e');
-      }
+      print(
+          'Notification scheduled successfully for ${birthday.name} at ${scheduledDate}');
+      _futureBirthdays(birthday, scheduleDate);
+    } catch (e) {
+      print('Error scheduling notification: $e');
     }
   }
 
+  //Cancel notifications if birthday removed
   Future<void> _cancelBirthdayNotification(Birthday birthday) async {
     try {
-      await flutterLocalNotificationsPlugin
-          .cancel(birthdayList.indexOf(birthday));
+      await flutterLocalNotificationsPlugin.cancel(birthday.hashCode);
       print('Notification canceled successfully for ${birthday.name}');
     } catch (e) {
       print('Error canceling notification: $e');
     }
   }
 
+  //formatting a birthday
   String datetell() {
     final selectedDate = ref.read(selectedDateProvider.notifier).state;
     if (selectedDate != null) {
       return '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}';
     } else
       return 'Select date';
+  }
+
+  //Calculate age
+  int findAge(Birthday birthday) {
+    int i = (birthday.date.month > DateTime.now().month ||
+            (birthday.date.month == DateTime.now().month &&
+                birthday.date.day >= DateTime.now().day)
+        ? DateTime.now().year - birthday.date.year
+        : DateTime.now().year - birthday.date.year + 1);
+    return i;
+  }
+
+  //Calculate days
+  int findDays(Birthday birthday) {
+    int d = (birthday.date.month > DateTime.now().month ||
+            (birthday.date.month == DateTime.now().month &&
+                birthday.date.day >= DateTime.now().day)
+        ? DateTime(DateTime.now().year, birthday.date.month, birthday.date.day)
+            .difference(DateTime.now())
+            .inDays
+        : DateTime(
+                DateTime.now().year + 1, birthday.date.month, birthday.date.day)
+            .difference(DateTime.now())
+            .inDays);
+    return d;
   }
 
   @override
@@ -455,6 +479,7 @@ class BirthdaysState extends ConsumerState<Birthdays> {
           child: Column(
             children: [
               Expanded(
+                //Displaying all the birthdays
                 child: Consumer(
                   builder: (context, watch, _) {
                     final birthdayStream =
@@ -465,27 +490,9 @@ class BirthdaysState extends ConsumerState<Birthdays> {
                           itemCount: birthdayList.length,
                           itemBuilder: (BuildContext context, int index) {
                             final birthday = birthdayList[index];
-                            int age = birthday.date.month >
-                                        DateTime.now().month ||
-                                    (birthday.date.month ==
-                                            DateTime.now().month &&
-                                        birthday.date.day >= DateTime.now().day)
-                                ? DateTime.now().year - birthday.date.year
-                                : DateTime.now().year - birthday.date.year + 1;
+                            int age = findAge(birthday);
 
-                            int days = birthday.date.month >
-                                        DateTime.now().month ||
-                                    (birthday.date.month ==
-                                            DateTime.now().month &&
-                                        birthday.date.day >= DateTime.now().day)
-                                ? DateTime(DateTime.now().year,
-                                        birthday.date.month, birthday.date.day)
-                                    .difference(DateTime.now())
-                                    .inDays
-                                : DateTime(DateTime.now().year + 1,
-                                        birthday.date.month, birthday.date.day)
-                                    .difference(DateTime.now())
-                                    .inDays;
+                            int days = findDays(birthday);
 
                             return Padding(
                               padding: const EdgeInsets.all(5.0),
@@ -494,6 +501,7 @@ class BirthdaysState extends ConsumerState<Birthdays> {
                                   borderRadius:
                                       BorderRadiusDirectional.circular(10),
                                 ),
+                                //Image on basis of index value
                                 leading: (index % 2 == 0)
                                     ? Image.asset(
                                         'assets/images/birthday1.png',
@@ -505,10 +513,12 @@ class BirthdaysState extends ConsumerState<Birthdays> {
                                         width: 40,
                                         height: 500,
                                       ),
+                                //remove birthday
                                 trailing: IconButton(
                                   onPressed: () {
                                     print(birthday.id);
-                                    _removeBirthday(user.uid, birthday.id, birthday.date, birthday.name);
+                                    _removeBirthday(user.uid, birthday.id,
+                                        birthday.date, birthday.name);
                                   },
                                   icon: const Icon(Icons.delete),
                                 ),
@@ -526,7 +536,9 @@ class BirthdaysState extends ConsumerState<Birthdays> {
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
-                                subtitle: Column(
+                                subtitle:
+                                    //Displaying date with age
+                                    Column(
                                   children: [
                                     Text(
                                       '${birthday.date.day} ${getMonthName(birthday.date.month)} ${birthday.date.year}',
@@ -559,6 +571,8 @@ class BirthdaysState extends ConsumerState<Birthdays> {
                   },
                 ),
               ),
+
+              //Add birthday ui functionality
               Align(
                 alignment: Alignment.bottomRight,
                 child: FloatingActionButton(
@@ -645,7 +659,6 @@ class BirthdaysState extends ConsumerState<Birthdays> {
                             TextButton(
                               onPressed: () {
                                 _addBirthday(context, user.uid);
-                            
                               },
                               child: const Text(
                                 'Add',

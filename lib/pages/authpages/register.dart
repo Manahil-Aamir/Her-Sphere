@@ -60,7 +60,7 @@ class _LoginState extends ConsumerState<Register> {
                           ..color = Colors.white,
                       ),
                     ),
-                    Text(
+                    const Text(
                       'REGISTER',
                       style: TextStyle(
                         fontFamily: 'OtomanopeeOne',
@@ -72,12 +72,12 @@ class _LoginState extends ConsumerState<Register> {
                 ),
               ),
 
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
 
               // UI for taking name as input
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Name',
                   filled: true,
                   fillColor: Colors.white,
@@ -90,12 +90,12 @@ class _LoginState extends ConsumerState<Register> {
                 },
               ),
 
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
 
               // UI for taking email as input
               TextFormField(
                 controller: _emailController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Email',
                   filled: true,
                   fillColor: Colors.white,
@@ -112,33 +112,32 @@ class _LoginState extends ConsumerState<Register> {
                 },
               ),
 
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
 
               // UI for taking password as input
               TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-                obscureText: true,
-                validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your password';
-                            } else if (value.length < 6) {
-                              return 'Enter password of atleast 6 characters';
-                            }
-                            return null;
-                }
-              ),
+                  controller: _passwordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Password',
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your password';
+                    } else if (value.length < 6) {
+                      return 'Enter password of atleast 6 characters';
+                    }
+                    return null;
+                  }),
 
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
 
               // UI for taking confirm password as input
               TextFormField(
                 controller: _confirmPasswordController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Confirm Password',
                   filled: true,
                   fillColor: Colors.white,
@@ -155,7 +154,7 @@ class _LoginState extends ConsumerState<Register> {
                 },
               ),
 
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
 
               // Button to Submit the form
               ElevatedButton(
@@ -164,17 +163,8 @@ class _LoginState extends ConsumerState<Register> {
                     // If the form is valid, proceed with registration
                     _auth.register(_emailController, _passwordController,
                         _nameController.text, context, _formKey);
-                    
                   }
                 },
-                child: Text(
-                  'Register',
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontFamily: 'OverlockSC',
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: Color(0xFF716562),
@@ -182,17 +172,28 @@ class _LoginState extends ConsumerState<Register> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
+                child: const Text(
+                  'Register',
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontFamily: 'OverlockSC',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
               ),
 
-              SizedBox(height: 15.0),
+              const SizedBox(height: 15.0),
 
               // UI for 'OR' text
-              const Text(
-                'or',
-                style: TextStyle(
-                  fontSize: 25,
-                  fontFamily: 'OverlockSC',
-                  fontWeight: FontWeight.w400,
+              const Center(
+                child: Text(
+                  'or',
+                  style: TextStyle(
+                    color: Color(0xFF716562),
+                    fontSize: 25,
+                    fontFamily: 'OverlockSC',
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
 

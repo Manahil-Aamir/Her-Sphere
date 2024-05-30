@@ -2,7 +2,7 @@
 
 import 'package:hersphere/models/journalmodel.dart';
 import 'package:hersphere/models/taskmodel.dart';
-import 'package:hersphere/models/todos.dart';
+import 'package:hersphere/models/todosmodel.dart';
 import 'package:hersphere/providers/selfcareinstance_provider.dart';
 import 'package:hersphere/providers/taskinstance_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

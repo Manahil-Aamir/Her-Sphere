@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hersphere/models/taskmodel.dart';
-import 'package:hersphere/models/todos.dart';
+import 'package:hersphere/models/todosmodel.dart';
 
 
 class TaskService {

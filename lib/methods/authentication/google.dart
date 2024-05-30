@@ -14,9 +14,10 @@ class GoogleSignInProvider extends StateNotifier<bool> {
   GoogleSignInProvider(super.state);
   GoogleSignInAccount get user => _user!;
 
-    bool _isLoggedIn = false;
-    bool get isLoggedIn => _isLoggedIn;
+  bool _isLoggedIn = false;
+  bool get isLoggedIn => _isLoggedIn;
 
+  // Implement Google Sign-In functionality
   Future<void> googleLogin(BuildContext context, WidgetRef ref) async {
     try {
       final googleUser = await googleSignIn.signIn();
@@ -31,39 +32,48 @@ class GoogleSignInProvider extends StateNotifier<bool> {
         idToken: googleAuth.idToken,
       );
 
+      // Sign in with GoogleAuthCredential
       await FirebaseAuth.instance.signInWithCredential(credentials);
 
+      // Set the isLoggedIn flag to true
       ref.read(authNotifierProvider.notifier).setLoggedIn(true);
 
+      // Navigate to the Home screen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => const Home(),
         ),
       );
-
     } catch (error) {
       print('Error signing in with Google: $error');
     }
   }
+
+  // Implement Sign-Out functionality
   Future<void> googleSignOut(BuildContext context, WidgetRef ref) async {
-  try {
-    GoogleSignIn _googleSignIn = GoogleSignIn();
-    if (await _googleSignIn.isSignedIn()) {
-      await _googleSignIn.signOut();
-    }
-    await FirebaseAuth.instance.signOut();
+    try {
+      GoogleSignIn _googleSignIn = GoogleSignIn();
+      // Check if the user is currently signed in
+      if (await _googleSignIn.isSignedIn()) {
+        //Sign outt from Google
+        await _googleSignIn.signOut();
+      }
+      //Sign out from Firebase
+      await FirebaseAuth.instance.signOut();
 
-    ref.read(authNotifierProvider.notifier).setLoggedIn(false);
+      // Set the isLoggedIn flag to false
+      ref.read(authNotifierProvider.notifier).setLoggedIn(false);
 
-    Navigator.pushReplacement(
+      // Navigate to the Welcome screen
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => const Welcome(),
         ),
       );
-  } catch (error) {
-    print('Error signing out: $error');
+    } catch (error) {
+      print('Error signing out: $error');
+    }
   }
-}
 }

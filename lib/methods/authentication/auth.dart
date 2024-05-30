@@ -6,9 +6,10 @@ import 'package:hersphere/pages/authpages/login.dart';
 import 'package:hersphere/pages/mainpages/home.dart';
 import 'package:hersphere/providers/auth_provider.dart';
 
-class Connect{
+class Connect {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // Login function
   void login(
     WidgetRef ref,
     TextEditingController emailController,
@@ -16,6 +17,7 @@ class Connect{
     BuildContext context,
     GlobalKey<FormState> formKey,
   ) async {
+    // Validate form
     if (formKey.currentState!.validate()) {
       await attemptLogin(
         ref,
@@ -28,6 +30,7 @@ class Connect{
     }
   }
 
+  // Attempt login with provided email and password
   Future<void> attemptLogin(
     WidgetRef ref,
     String email,
@@ -52,6 +55,7 @@ class Connect{
     }
   }
 
+  // Handle errors during login
   void handleError(BuildContext context, dynamic error) {
     String errorMessage;
 
@@ -92,24 +96,49 @@ class Connect{
     } else {
       errorMessage = 'Sign-in failed: $error';
     }
-
+    // Show error dialog with error message
     _showErrorDialog(context, errorMessage);
   }
 
+  // Show error dialog with provided message
   void _showErrorDialog(BuildContext context, String message) {
     if (!context.mounted) return;
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Error'),
-          content: Text(message),
+          title: const Text(
+            'Error',
+            style: TextStyle(
+              color: Color(0xFF716562),
+              fontSize: 25,
+              fontFamily: 'OverlockSC',
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          content: Text(
+            message,
+            style: const TextStyle(
+              color: Color(0xFF716562),
+              fontSize: 18,
+              fontFamily: 'OverlockSC',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('OK'),
+              child: const Text(
+                'OK',
+                style: TextStyle(
+                  color: Color(0xFF716562),
+                  fontSize: 18,
+                  fontFamily: 'OverlockSC',
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ],
         );
@@ -117,6 +146,7 @@ class Connect{
     );
   }
 
+  // Register function
   Future<void> register(
     TextEditingController emailController,
     TextEditingController passwordController,

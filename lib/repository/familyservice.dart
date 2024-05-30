@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hersphere/models/birthdaymodel.dart';
-import 'package:hersphere/models/family.dart';
+import 'package:hersphere/models/familymodel.dart';
 
 class FamilyService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

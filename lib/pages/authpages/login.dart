@@ -180,13 +180,15 @@ class _LoginState extends ConsumerState<Login> {
                 ),
                 const SizedBox(height: 15.0),
                 // UI for 'OR' text
-                const Text(
-                  'or',
-                  style: TextStyle(
-                    color: Color(0xFF716562),
-                    fontSize: 25,
-                    fontFamily: 'OverlockSC',
-                    fontWeight: FontWeight.w400,
+                const Center(
+                  child: Text(
+                    'or',
+                    style: TextStyle(
+                      color: Color(0xFF716562),
+                      fontSize: 25,
+                      fontFamily: 'OverlockSC',
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 15.0),
