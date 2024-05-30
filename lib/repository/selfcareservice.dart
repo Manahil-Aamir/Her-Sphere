@@ -194,13 +194,11 @@ class SelfCareService {
     }
   }
 
-
-  // Method to get a stream of the checked array
 Stream<List<bool>> getCheckedStream(String uid) {
-  return _firestore.collection('selfcare').doc(uid).snapshots().asyncMap((doc) async {
+  return _firestore.collection('selfcare').doc(uid).snapshots().map((doc) {
     if (!doc.exists) {
       // Create the document with default data if it doesn't exist
-      await _firestore.collection('selfcare').doc(uid).set({
+      _firestore.collection('selfcare').doc(uid).set({
         'sleep': DateTime.now(), // Default sleep time
         'wakeup': DateTime.now().add(const Duration(hours: 8)), // Default wakeup time
         'notify': false, // Default notify flag
@@ -214,17 +212,36 @@ Stream<List<bool>> getCheckedStream(String uid) {
       if (data == null || data['checked'] == null) {
         return List<bool>.filled(10, false); // Return a default checked array
       }
-      
-      // Ensure that the 'checked' field is a List<dynamic>
+
+      // Ensure that the 'checked' field is a List<dynamic> or Map<String, dynamic>
       final checkedData = data['checked'];
       if (checkedData is List<dynamic>) {
+        // Convert List<dynamic> to List<bool>
         return List<bool>.from(checkedData.map((e) => e as bool));
+      } else if (checkedData is Map<String, dynamic>) {
+        // Convert map values to boolean based on their string representation
+        final List<bool> checkedList = checkedData.values.map((value) {
+          if (value is bool) {
+            return value;
+          } else if (value is String) {
+            // Convert string 'true' to true, else false
+            return value.toLowerCase() == 'true';
+          } else {
+            // Handle other types
+            return false; // Default value
+          }
+        }).toList();
+        return checkedList;
       } else {
+        // Handle other types
+        print('Unexpected data type for the \'checked\' field: ${checkedData.runtimeType}');
         return List<bool>.filled(10, false); // Return a default checked array
       }
     }
   });
 }
+
+
 
 
   // Getter for wakeup time

@@ -90,64 +90,60 @@ Widget build(BuildContext context) {
             crossAxisAlignment: CrossAxisAlignment.stretch, // Ensure children fill the width
             children: [
               // Creating a check on how much you have achieved for a day
-              // Removed Expanded widget
               // List of questions and their corresponding checkbox
               Consumer(
-                builder: (context, watch, _) {
-                  final checkedStream = ref.watch(checkedStreamProvider(user.uid));
-                  return checkedStream.when(
-                    data: (checkedList) {
-                      final Map<int, bool> checkedMap = {
-                        for (var index in List.generate(checkedList.length, (index) => index))
-                          index: checkedList[index]
-                      };
+  builder: (context, watch, _) {
+    final checkedStream = ref.watch(checkedStreamProvider(user.uid));
+    return checkedStream.when(
+      data: (checkedList) {
+        _checkedCount = checkedList.where((value) => value).length;
+        print(checkedList);
 
-                      _checkedCount = checkedMap.values.where((value) => value).length;
+        return Column(
+          children: [
+            LinearProgressIndicator(
+              value: _calculateProgress(),
+              minHeight: 10.0,
+              backgroundColor: Colors.red,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+            ),
+            Column(
+              children: List.generate(questions.length, (index) {
+                return Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: ListTile(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadiusDirectional.circular(10),
+                    ),
+                    tileColor: Colors.white.withOpacity(0.5),
+                    title: Text(
+                      questions[index],
+                      style: const TextStyle(
+                        fontFamily: 'OtomanopeeOne',
+                        fontSize: 15.0,
+                        color: Color(0xFF726662),
+                      ),
+                    ),
+                    trailing: Checkbox(
+                      value: checkedList[index],
+                      onChanged: (newValue) {
+                        ref.read(selfCareNotifierProvider.notifier).updateCheckedIndex(user.uid, index, !checkedList[index]);
+                        //ref.refresh(checkedStreamProvider(user.uid));
+                      },
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ],
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) => Text('Error: $error'),
+    );
+  },
+),
 
-                      return Column(
-                        children: [
-                          LinearProgressIndicator(
-                            value: _calculateProgress(),
-                            minHeight: 10.0,
-                            backgroundColor: Colors.red,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
-                          ),
-                          Column(
-                            children: List.generate(questions.length, (index) {
-                              return Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: ListTile(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadiusDirectional.circular(10),
-                                  ),
-                                  tileColor: Colors.white.withOpacity(0.5),
-                                  title: Text(
-                                    questions[index],
-                                    style: const TextStyle(
-                                      fontFamily: 'OtomanopeeOne',
-                                      fontSize: 15.0,
-                                      color: Color(0xFF726662),
-                                    ),
-                                  ),
-                                  trailing: Checkbox(
-                                    value: checkedMap[index] ?? false,
-                                    onChanged: (newValue) {
-                                      ref.read(selfCareNotifierProvider.notifier).updateCheckedIndex(user.uid, index, newValue ?? false);
-                                      ref.refresh(checkedStreamProvider(user.uid));
-                                    },
-                                  ),
-                                ),
-                              );
-                            }),
-                          ),
-                        ],
-                      );
-                    },
-                    loading: () => CircularProgressIndicator(),
-                    error: (error, stackTrace) => Text('Error: $error'),
-                  );
-                },
-              ),
             ],
           ),
         ),
