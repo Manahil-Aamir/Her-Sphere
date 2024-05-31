@@ -103,13 +103,13 @@ class SelfCareService {
       } else {
         // If the document does not exist, create it first
         await addOrUpdateSelfCare(SelfCareModel(
-          uid: uid,
-          journalDocumentIds: [],
-          sleep: DateTime.now(),
-          wakeup: DateTime.now().add(const Duration(hours: 8)),
-          notify: newValue,
-          checked: List<bool>.filled(10, false),
-          id: ''));
+            uid: uid,
+            journalDocumentIds: [],
+            sleep: DateTime.now(),
+            wakeup: DateTime.now().add(const Duration(hours: 8)),
+            notify: newValue,
+            checked: List<bool>.filled(10, false),
+            id: ''));
       }
     } catch (error) {
       print("Error updating notify value: $error");
@@ -126,13 +126,13 @@ class SelfCareService {
       } else {
         // If the document does not exist, create it first
         await addOrUpdateSelfCare(SelfCareModel(
-          uid: uid,
-          journalDocumentIds: [],
-          sleep: DateTime.now(),
-          wakeup: DateTime.now().add(const Duration(hours: 8)),
-          notify: false,
-          checked: List<bool>.filled(10, false),
-          id: ''));
+            uid: uid,
+            journalDocumentIds: [],
+            sleep: DateTime.now(),
+            wakeup: DateTime.now().add(const Duration(hours: 8)),
+            notify: false,
+            checked: List<bool>.filled(10, false),
+            id: ''));
         // Now update the checked index
         await _firestore.collection('selfcare').doc(uid).update({
           'checked.$index': value,
@@ -143,9 +143,10 @@ class SelfCareService {
     }
   }
 
- DateTime convertTimeOfDayToDateTime(TimeOfDay timeOfDay) {
+  DateTime convertTimeOfDayToDateTime(TimeOfDay timeOfDay) {
     final now = DateTime.now();
-    return DateTime(now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+    return DateTime(
+        now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
   }
 
   Future<void> updateWakeupTime(String uid, TimeOfDay newWakeupTime) async {
@@ -157,14 +158,13 @@ class SelfCareService {
         });
       } else {
         await addOrUpdateSelfCare(SelfCareModel(
-          uid: uid,
-          wakeup: newWakeupDateTime,
-          sleep: DateTime.now(),
-          notify: false,
-          checked: List<bool>.filled(10, false),
-          journalDocumentIds: [],
-          id: ''
-        ));
+            uid: uid,
+            wakeup: newWakeupDateTime,
+            sleep: DateTime.now(),
+            notify: false,
+            checked: List<bool>.filled(10, false),
+            journalDocumentIds: [],
+            id: ''));
       }
     } catch (error) {
       print("Error updating wakeup time: $error");
@@ -180,69 +180,73 @@ class SelfCareService {
         });
       } else {
         await addOrUpdateSelfCare(SelfCareModel(
-          uid: uid,
-          sleep: newSleepDateTime,
-          wakeup: DateTime.now().add(const Duration(hours: 8)),
-          notify: false,
-          checked: List<bool>.filled(10, false),
-          journalDocumentIds: [],
-          id: ''
-        ));
+            uid: uid,
+            sleep: newSleepDateTime,
+            wakeup: DateTime.now().add(const Duration(hours: 8)),
+            notify: false,
+            checked: List<bool>.filled(10, false),
+            journalDocumentIds: [],
+            id: ''));
       }
     } catch (error) {
       print("Error updating sleep time: $error");
     }
   }
 
-Stream<List<bool>> getCheckedStream(String uid) {
-  return _firestore.collection('selfcare').doc(uid).snapshots().map((doc) {
-    if (!doc.exists) {
-      // Create the document with default data if it doesn't exist
-      _firestore.collection('selfcare').doc(uid).set({
-        'sleep': DateTime.now(), // Default sleep time
-        'wakeup': DateTime.now().add(const Duration(hours: 8)), // Default wakeup time
-        'notify': false, // Default notify flag
-        'checked': List<bool>.filled(10, false), // Default checked array
-        'journalDocumentIds': [], // Default journal document IDs
-        'uid': uid
-      });
-      return List<bool>.filled(10, false); // Return a default checked array
-    } else {
-      final data = doc.data();
-      if (data == null || data['checked'] == null) {
+  Stream<List<bool>> getCheckedStream(String uid) {
+    return _firestore.collection('selfcare').doc(uid).snapshots().map((doc) {
+      if (!doc.exists) {
+        // Create the document with default data if it doesn't exist
+        _firestore.collection('selfcare').doc(uid).set({
+          'sleep': DateTime.now(), // Default sleep time
+          'wakeup': DateTime.now()
+              .add(const Duration(hours: 8)), // Default wakeup time
+          'notify': false, // Default notify flag
+          'checked': List<bool>.filled(10, false), // Default checked array
+          'journalDocumentIds': [], // Default journal document IDs
+          'uid': uid
+        });
         return List<bool>.filled(10, false); // Return a default checked array
-      }
-
-      // Ensure that the 'checked' field is a List<dynamic> or Map<String, dynamic>
-      final checkedData = data['checked'];
-      if (checkedData is List<dynamic>) {
-        // Convert List<dynamic> to List<bool>
-        return List<bool>.from(checkedData.map((e) => e as bool));
-      } else if (checkedData is Map<String, dynamic>) {
-        // Convert map values to boolean based on their string representation
-        final List<bool> checkedList = checkedData.values.map((value) {
-          if (value is bool) {
-            return value;
-          } else if (value is String) {
-            // Convert string 'true' to true, else false
-            return value.toLowerCase() == 'true';
-          } else {
-            // Handle other types
-            return false; // Default value
-          }
-        }).toList();
-        return checkedList;
       } else {
-        // Handle other types
-        print('Unexpected data type for the \'checked\' field: ${checkedData.runtimeType}');
-        return List<bool>.filled(10, false); // Return a default checked array
+        final data = doc.data();
+        if (data == null || data['checked'] == null) {
+          return List<bool>.filled(10, false); // Return a default checked array
+        }
+
+        // Ensure that the 'checked' field is a List<dynamic> or Map<String, dynamic>
+        final checkedData = data['checked'];
+        if (checkedData is List<dynamic>) {
+          // Convert List<dynamic> to List<bool>
+          return List<bool>.from(checkedData.map((e) => e as bool));
+        } else if (checkedData is Map<String, dynamic>) {
+          // Convert map values to boolean based on their string representation
+          final List<bool> checkedList = List<bool>.filled(10, false);
+          checkedData.forEach((key, value) {
+            final index = int.tryParse(key);
+            if (index != null && index >= 0 && index < checkedList.length) {
+              if (value is bool) {
+                checkedList[index] = value;
+              } else if (value is String) {
+                // Convert string representation of boolean to actual boolean
+                checkedList[index] = value.toLowerCase() == 'true';
+              } else {
+                // For other types, set default value
+                checkedList[index] =
+                    false; // or true, depending on your default behavior
+              }
+            }
+          });
+
+          return checkedList;
+        } else {
+          // Handle other types
+          print(
+              'Unexpected data type for the \'checked\' field: ${checkedData.runtimeType}');
+          return List<bool>.filled(10, false); // Return a default checked array
+        }
       }
-    }
-  });
-}
-
-
-
+    });
+  }
 
   // Getter for wakeup time
   Future<DateTime?> getWakeupTime(String uid) async {
@@ -294,7 +298,11 @@ Stream<List<bool>> getCheckedStream(String uid) {
 
   //Stream to get all info for hydration
   Stream<SelfCareModel> getSelfCareWithoutJournalAndChecked(String uid) {
-    return _firestore.collection('selfcare').doc(uid).snapshots().map((snapshot) {
+    return _firestore
+        .collection('selfcare')
+        .doc(uid)
+        .snapshots()
+        .map((snapshot) {
       if (snapshot.exists && snapshot.data() != null) {
         return SelfCareModel.fromQuerySnapshot(snapshot);
       } else {
@@ -304,14 +312,14 @@ Stream<List<bool>> getCheckedStream(String uid) {
           id: '',
           sleep: DateTime.now(),
           wakeup: DateTime.now(),
-          notify: false, 
+          notify: false,
           journalDocumentIds: [],
         );
       }
     });
   }
 
-  // Stream to get journals
+// Stream to get journals
   Stream<List<JournalModel>> getJournals(String uid) {
     return _firestore
         .collection('selfcare')
@@ -327,7 +335,7 @@ Stream<List<bool>> getCheckedStream(String uid) {
           return [];
         }
 
-        // Fetch birthday data for each ID
+        // Fetch journal data for each ID
         List<JournalModel> journals = [];
         for (String id in journalIds) {
           DocumentSnapshot journalDoc =
@@ -343,6 +351,9 @@ Stream<List<bool>> getCheckedStream(String uid) {
           }
         }
 
+        // Sort journals by date in ascending order
+        journals.sort((a, b) => b.date.compareTo(a.date));
+
         return journals;
       } else {
         return []; // Return an empty list if the field doesn't exist or is null
@@ -350,7 +361,7 @@ Stream<List<bool>> getCheckedStream(String uid) {
     });
   }
 
-    // Get Selfcare document as a stream
+  // Get Selfcare document as a stream
   Stream<List<SelfCareModel>> getAllSelfCare() {
     return _firestore.collection('selfcare').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
@@ -358,5 +369,4 @@ Stream<List<bool>> getCheckedStream(String uid) {
       }).toList();
     });
   }
-
 }

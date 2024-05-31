@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hersphere/pages/impwidgets/appbar.dart';
 import 'package:hersphere/pages/selfcarepages/selfcare.dart';
 import 'package:hersphere/providers/selfcare_provider.dart';
-import 'package:hersphere/providers/selfcarefuture_provider.dart';
 import 'package:hersphere/providers/selfcarestream_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -20,8 +19,8 @@ class Hydration extends ConsumerStatefulWidget {
 
 class _HydrationState extends ConsumerState<Hydration> {
   final user = FirebaseAuth.instance.currentUser!;
-  List<int> hydrationNotificationIds = List.generate(8, (index) => 1000 + index);
-
+  List<int> hydrationNotificationIds =
+      List.generate(8, (index) => 1000 + index);
 
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   bool isInitialized = false;
@@ -140,7 +139,7 @@ class _HydrationState extends ConsumerState<Hydration> {
     isInitialized = true;
   }
 
-// Method to schedule notifications
+  // Method to schedule notifications
   Future<void> scheduleNotifications(
       TimeOfDay startTime, TimeOfDay endTime) async {
     print("Notifications");
@@ -149,7 +148,7 @@ class _HydrationState extends ConsumerState<Hydration> {
         (endTime.minute - startTime.minute);
 
     // Calculate the interval between each notification
-    int intervalMinutes = totalMinutes ~/ 8;
+    int intervalMinutes = totalMinutes ~/ 9;
 
     // Initialize notifications plugin
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -163,7 +162,7 @@ class _HydrationState extends ConsumerState<Hydration> {
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
     // Schedule notifications
-    for (int i = 0; i < 8; i++) {
+    for (int i = 1; i < 9; i++) {
       // Calculate notification time based on interval
       int notificationMinutes = intervalMinutes * i;
       int notificationHours = notificationMinutes ~/ 60;
@@ -174,8 +173,8 @@ class _HydrationState extends ConsumerState<Hydration> {
       print(notificationTime);
       // Schedule notification
       await flutterLocalNotificationsPlugin.zonedSchedule(
-        hydrationNotificationIds[i],
-        'Notification ${i + 1}',
+        hydrationNotificationIds[i - 1],
+        'Notification ${i}',
         'Drink Water',
         _nextInstanceOfTime(notificationTime),
         matchDateTimeComponents: DateTimeComponents.time,
@@ -212,15 +211,13 @@ class _HydrationState extends ConsumerState<Hydration> {
 
     // Cancel all scheduled notifications
     for (int id in hydrationNotificationIds) {
-    await flutterLocalNotificationsPlugin.cancel(id);
-  }
+      await flutterLocalNotificationsPlugin.cancel(id);
+    }
   }
 
-final startProvider = StateProvider<TimeOfDay>((ref) => TimeOfDay.now());
-final endProvider = StateProvider<TimeOfDay>((ref) => TimeOfDay.now());
-final switchValueProvider = StateProvider<bool>((ref) => false);
 
-void _editTime(bool wakeup, bool sleep) async {
+
+  void _editTime(bool wakeup, bool sleep, TimeOfDay time, bool on) async {
     TimeOfDay initialTime = TimeOfDay.now();
     TimeOfDay? pickedTime = await showTimePicker(
       context: context,
@@ -232,7 +229,8 @@ void _editTime(bool wakeup, bool sleep) async {
             timePickerTheme: TimePickerThemeData(
               dayPeriodColor: const Color(0xFFBCF7C5),
               dayPeriodTextColor: const Color(0xFF726662),
-              dayPeriodTextStyle: const TextStyle(color: const Color(0xFF726662)),
+              dayPeriodTextStyle:
+                  const TextStyle(color: const Color(0xFF726662)),
               dialHandColor: const Color(0xFFBCF7C5),
               dialTextColor: const Color(0xFF726662),
               dialTextStyle: const TextStyle(color: Colors.indigo),
@@ -249,10 +247,12 @@ void _editTime(bool wakeup, bool sleep) async {
                 borderRadius: BorderRadius.circular(30.0),
               ),
               confirmButtonStyle: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF726662)),
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(const Color(0xFF726662)),
               ),
               cancelButtonStyle: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all<Color>(const Color(0xFF726662)),
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(const Color(0xFF726662)),
               ),
             ),
           ),
@@ -262,20 +262,22 @@ void _editTime(bool wakeup, bool sleep) async {
     );
 
     if (pickedTime != null) {
-      final start = ref.read(startProvider.notifier).state;
-      final end = ref.read(endProvider.notifier).state;
-      
-      if (wakeup && end != pickedTime) {
-        ref.read(selfCareNotifierProvider.notifier).updateWakeupTime(user.uid, pickedTime);
-        if (ref.read(switchValueProvider.notifier).state) {
+
+      if (wakeup) {
+        ref
+            .read(selfCareNotifierProvider.notifier)
+            .updateWakeupTime(user.uid, pickedTime);
+        if (on) {
           cancelAllNotifications();
-          scheduleNotifications(start, end);
+          scheduleNotifications(pickedTime, time);
         }
-      } else if (sleep && start != pickedTime) {
-        ref.read(selfCareNotifierProvider.notifier).updateSleepTime(user.uid, pickedTime);
-        if (ref.read(switchValueProvider.notifier).state) {
+      } else if (sleep) {
+        ref
+            .read(selfCareNotifierProvider.notifier)
+            .updateSleepTime(user.uid, pickedTime);
+        if (on) {
           cancelAllNotifications();
-          scheduleNotifications(start, end);
+          scheduleNotifications(time, pickedTime);
         }
       }
     }
@@ -322,8 +324,14 @@ void _editTime(bool wakeup, bool sleep) async {
                     Switch(
                       value: notify,
                       onChanged: (value) {
-                        ref.read(selfCareNotifierProvider.notifier).updateNotify(user.uid, value);
-                        if (value) scheduleNotifications(start, end);
+                        ref
+                            .read(selfCareNotifierProvider.notifier)
+                            .updateNotify(user.uid, value);
+                        if (value) {
+                          scheduleNotifications(start, end);
+                        } else {
+                          cancelAllNotifications();
+                        }
                       },
                     ),
                     const Text(
@@ -371,7 +379,7 @@ void _editTime(bool wakeup, bool sleep) async {
                     const SizedBox(width: 15),
                     IconButton(
                       onPressed: () {
-                        _editTime(true, false);
+                        _editTime(true, false, TimeOfDay.fromDateTime(selfCareModel.sleep), selfCareModel.notify);
                       },
                       icon: const Icon(
                         Icons.time_to_leave,
@@ -414,7 +422,7 @@ void _editTime(bool wakeup, bool sleep) async {
                     const SizedBox(width: 15),
                     IconButton(
                       onPressed: () {
-                        _editTime(false, true);
+                        _editTime(false, true, TimeOfDay.fromDateTime(selfCareModel.wakeup), selfCareModel.notify);
                       },
                       icon: const Icon(
                         Icons.time_to_leave,
@@ -428,7 +436,7 @@ void _editTime(bool wakeup, bool sleep) async {
           ),
         );
       },
-      loading: () => Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(child: Text('Error: $error')),
     );
   }
