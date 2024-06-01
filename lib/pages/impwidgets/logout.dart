@@ -11,16 +11,16 @@ class Logout extends ConsumerWidget{
   @override
   Widget build(BuildContext context, WidgetRef ref) {
               final logged = ref.watch(authNotifierProvider);
-    final loggedIn = logged.value;
+    final bool loggedIn = logged.value  ?? false;
     final GoogleSignInProvider _googleSignInProvider =
-        GoogleSignInProvider(loggedIn!);
+        GoogleSignInProvider(loggedIn);
     return SizedBox(
       // The width of the button.
       width: 80,
-
+    
       // The height of the button.
       height: 20,
-
+    
       child: ElevatedButton(
           // The style of the button, including background color, text style, and more.
           style: ElevatedButton.styleFrom(
@@ -37,12 +37,12 @@ class Logout extends ConsumerWidget{
             ),
             elevation: 3,
           ),
-
+    
           //Navigate to login page when the button is pressed.
           onPressed: () {
             _googleSignInProvider.googleSignOut(context, ref);
           },
-
+    
           // The child widget of the button, which is a centered text with the given text.
           child: const Center(child: Text('LOGOUT'))),
     );

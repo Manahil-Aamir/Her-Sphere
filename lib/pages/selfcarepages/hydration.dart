@@ -203,7 +203,7 @@ class _HydrationState extends ConsumerState<Hydration> {
     return now.isBefore(today) ? today : today.add(const Duration(days: 1));
   }
 
-// Method to cancel all scheduled notifications
+  // Method to cancel all scheduled notifications
   Future<void> cancelAllNotifications() async {
     if (!isInitialized) {
       await initializeNotifications();
@@ -216,7 +216,7 @@ class _HydrationState extends ConsumerState<Hydration> {
   }
 
 
-
+  // Method to edit the wakeup or sleep time and update notifications
   void _editTime(bool wakeup, bool sleep, TimeOfDay time, bool on) async {
     TimeOfDay initialTime = TimeOfDay.now();
     TimeOfDay? pickedTime = await showTimePicker(

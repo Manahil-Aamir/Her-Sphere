@@ -33,7 +33,8 @@ class _ToDoState extends ConsumerState<ToDo> {
     _textEditingController.dispose();
     super.dispose();
   }
-
+  
+  //Add task
   void _addTask(String str) {
     if (str.isNotEmpty) {
       _taskService.addToDo(user.uid, str, false); // Initially unchecked
@@ -41,6 +42,7 @@ class _ToDoState extends ConsumerState<ToDo> {
     }
   }
 
+  //Remove task
   void _removeTask(String taskId, String todoDocId) {
     _taskService.removeToDo(taskId, todoDocId);
   }
@@ -70,6 +72,8 @@ class _ToDoState extends ConsumerState<ToDo> {
                           final task = toDos[index];
                           return Padding(
                             padding: const EdgeInsets.all(5.0),
+
+                            //Printing out todo with checkbbbbbox
                             child: ListTile(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -110,6 +114,8 @@ class _ToDoState extends ConsumerState<ToDo> {
                 },
               ),
             ),
+
+            //Adding a new todo
             Align(
               alignment: Alignment.bottomRight,
               child: FloatingActionButton(

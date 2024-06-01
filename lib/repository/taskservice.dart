@@ -2,25 +2,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hersphere/models/taskmodel.dart';
 import 'package:hersphere/models/todosmodel.dart';
 
-
 class TaskService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // Check if a task document exists by UID
   Future<bool> _taskExists(String uid) async {
     DocumentSnapshot doc = await _firestore.collection('tasks').doc(uid).get();
     return doc.exists;
   }
 
-    Future<void> updateToDoChecked(String toDoDocId, bool checked) async {
+  //Update the checkbox of ToDo
+  Future<void> updateToDoChecked(String toDoDocId, bool checked) async {
     try {
-      await _firestore..collection('todos').doc(toDoDocId).update({
-        'check': checked,
-      });
+      await _firestore
+        ..collection('todos').doc(toDoDocId).update({
+          'check': checked,
+        });
     } catch (error) {
       print("Error in updateToDoChecked: $error");
     }
   }
-
+  
+  // Add or Update Task document based on user UID
   Future<void> addOrUpdateTask(TaskModel task) async {
     try {
       bool exists = await _taskExists(task.uid);
@@ -36,7 +39,7 @@ class TaskService {
     }
   }
 
-// Add a ToDo document ID to the task document and the todos collection
+  // Add a ToDo document ID to the task document and the todos collection
   Future<void> addToDo(String uid, String data, bool check) async {
     DocumentReference toDoDoc = await _firestore.collection('todos').add({
       'data': data,
@@ -99,86 +102,98 @@ class TaskService {
     }
   }
 
-Future<List<TaskModel>> getAllTasks() async {
+  Future<List<TaskModel>> getAllTasks() async {
     final snapshot = await _firestore.collection('tasks').get();
     if (snapshot.docs.isEmpty) {
       return [];
     }
-    return snapshot.docs.map((doc) => TaskModel.fromQuerySnapshot(doc)).toList();
+    return snapshot.docs
+        .map((doc) => TaskModel.fromQuerySnapshot(doc))
+        .toList();
   }
 
- Stream<TaskModel> getTaskWithoutToDos(String uid) {
-  return _firestore.collection('tasks').doc(uid).snapshots().asyncMap((snapshot) async {
-    if (snapshot.exists && snapshot.data() != null) {
-      final data = snapshot.data() as Map<String, dynamic>;
-      return TaskModel(
-        uid: data['uid'] as String,
-        total: data['total'] as int,
-        housing: data['housing'] as int,
-        transportation: data['transportation'] as int,
-        food: data['food'] as int,
-        healthcare: data['healthcare'] as int,
-        utilities: data['utilities'] as int,
-        misc: data['misc'] as int,
-        taskDocumentIds: List<String>.from(data['taskDocumentIds'] ?? []),
-        id: snapshot.id,
-      );
-    } else {
-      // Create a new TaskModel if it doesn't exist
-      final newTask = TaskModel(
-        uid: uid,
-        total: 0, // Add appropriate initial values
-        housing: 0,
-        transportation: 0,
-        food: 0,
-        healthcare: 0,
-        utilities: 0,
-        misc: 0,
-        taskDocumentIds: [],
-        id: uid,
-      );
+  Stream<TaskModel> getTaskWithoutToDos(String uid) {
+    return _firestore
+        .collection('tasks')
+        .doc(uid)
+        .snapshots()
+        .asyncMap((snapshot) async {
+      if (snapshot.exists && snapshot.data() != null) {
+        final data = snapshot.data() as Map<String, dynamic>;
+        return TaskModel(
+          uid: data['uid'] as String,
+          total: data['total'] as int,
+          housing: data['housing'] as int,
+          transportation: data['transportation'] as int,
+          food: data['food'] as int,
+          healthcare: data['healthcare'] as int,
+          utilities: data['utilities'] as int,
+          misc: data['misc'] as int,
+          taskDocumentIds: List<String>.from(data['taskDocumentIds'] ?? []),
+          id: snapshot.id,
+        );
+      } else {
+        // Create a new TaskModel if it doesn't exist
+        final newTask = TaskModel(
+          uid: uid,
+          total: 0, // Add appropriate initial values
+          housing: 0,
+          transportation: 0,
+          food: 0,
+          healthcare: 0,
+          utilities: 0,
+          misc: 0,
+          taskDocumentIds: [],
+          id: uid,
+        );
 
-      // Save the new TaskModel to Firestore
-      await addOrUpdateTask(newTask);
+        // Save the new TaskModel to Firestore
+        await addOrUpdateTask(newTask);
 
-      // Return the new TaskModel
-      return newTask;
-    }
-  });
-}
-
+        // Return the new TaskModel
+        return newTask;
+      }
+    });
+  }
 
   Stream<List<ToDos>> getToDos(String taskId) {
-  return _firestore.collection('tasks').doc(taskId).snapshots().asyncMap((doc) async {
-    if (doc.exists && doc.data() != null && doc.data()!.containsKey('taskDocumentIds')) {
-      List<String> todoIds = List<String>.from(doc['taskDocumentIds'] ?? []);
-      if (todoIds.isEmpty) {
-        return [];
-      }
-
-      // Fetch ToDos data for each ID
-      List<ToDos> todos = [];
-      for (String id in todoIds) {
-        DocumentSnapshot todoDoc = await _firestore.collection('todos').doc(id).get();
-        if (todoDoc.exists) {
-          Map<String, dynamic> data = todoDoc.data() as Map<String, dynamic>;
-          todos.add(ToDos(
-            data: data['data'] as String,
-            check: data['check'] as bool,
-            id: todoDoc.id, // Retrieve the document ID here
-          ));
+    return _firestore
+        .collection('tasks')
+        .doc(taskId)
+        .snapshots()
+        .asyncMap((doc) async {
+      if (doc.exists &&
+          doc.data() != null &&
+          doc.data()!.containsKey('taskDocumentIds')) {
+        List<String> todoIds = List<String>.from(doc['taskDocumentIds'] ?? []);
+        if (todoIds.isEmpty) {
+          return [];
         }
+
+        // Fetch ToDos data for each ID
+        List<ToDos> todos = [];
+        for (String id in todoIds) {
+          DocumentSnapshot todoDoc =
+              await _firestore.collection('todos').doc(id).get();
+          if (todoDoc.exists) {
+            Map<String, dynamic> data = todoDoc.data() as Map<String, dynamic>;
+            todos.add(ToDos(
+              data: data['data'] as String,
+              check: data['check'] as bool,
+              id: todoDoc.id, // Retrieve the document ID here
+            ));
+          }
+        }
+
+        return todos;
+      } else {
+        return []; // Return an empty list if the field doesn't exist or is null
       }
+    });
+  }
 
-      return todos;
-    } else {
-      return []; // Return an empty list if the field doesn't exist or is null
-    }
-  });
-}
-
-
-  Future<void> updateTaskIntValue(String uid, String attribute, int value) async {
+  Future<void> updateTaskIntValue(
+      String uid, String attribute, int value) async {
     try {
       await _firestore.collection('tasks').doc(uid).update({
         attribute: value,
@@ -201,7 +216,8 @@ Future<List<TaskModel>> getAllTasks() async {
       int utilities = data['utilities'] ?? 0;
       int misc = data['misc'] ?? 0;
 
-      return total - (housing + transportation + food + healthcare + utilities + misc);
+      return total -
+          (housing + transportation + food + healthcare + utilities + misc);
     });
   }
 }

@@ -6,14 +6,14 @@ import 'package:hersphere/models/selfcaremodel.dart';
 class SelfCareService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Check if a family document exists by UID
+  // Check if a selfcare document exists by UID
   Future<bool> _SelfCareExists(String uid) async {
     DocumentSnapshot doc =
         await _firestore.collection('selfcare').doc(uid).get();
     return doc.exists;
   }
 
-  // Add or Update Family document based on user UID
+  // Add or Update Selfcare document based on user UID
   Future<void> addOrUpdateSelfCare(SelfCareModel selfcare) async {
     try {
       bool exists = await _SelfCareExists(selfcare.uid);
@@ -32,7 +32,7 @@ class SelfCareService {
     }
   }
 
-  // Add a journal document ID to the family document and the birthday collection
+  // Add a journal document ID to the selfcare document and the journal collection
   Future<void> addJournal(String uid, String name, DateTime date) async {
     DocumentReference journalDoc = await _firestore.collection('journal').add({
       'name': name,
@@ -41,7 +41,7 @@ class SelfCareService {
     await addJournalDocumentId(uid, journalDoc.id);
   }
 
-  // Remove a journal document ID from the family document and delete the birthday document
+  // Remove a journal document ID from the selfcare document and delete the journal document
   Future<void> removeJournal(String uid, String journalDocId) async {
     await removeJournalDocumentId(uid, journalDocId);
     await _firestore.collection('journal').doc(journalDocId).delete();
@@ -149,6 +149,7 @@ class SelfCareService {
         now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
   }
 
+  //Update the wakeup time
   Future<void> updateWakeupTime(String uid, TimeOfDay newWakeupTime) async {
     DateTime newWakeupDateTime = convertTimeOfDayToDateTime(newWakeupTime);
     try {
@@ -171,6 +172,7 @@ class SelfCareService {
     }
   }
 
+  //Update the sleep time
   Future<void> updateSleepTime(String uid, TimeOfDay newSleepTime) async {
     DateTime newSleepDateTime = convertTimeOfDayToDateTime(newSleepTime);
     try {
@@ -193,6 +195,7 @@ class SelfCareService {
     }
   }
 
+  //Getting the checked array as stream
   Stream<List<bool>> getCheckedStream(String uid) {
     return _firestore.collection('selfcare').doc(uid).snapshots().map((doc) {
       if (!doc.exists) {
@@ -319,7 +322,7 @@ class SelfCareService {
     });
   }
 
-// Stream to get journals
+  // Stream to get journals
   Stream<List<JournalModel>> getJournals(String uid) {
     return _firestore
         .collection('selfcare')

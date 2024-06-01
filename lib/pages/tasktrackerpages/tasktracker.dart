@@ -26,7 +26,10 @@ class _TaskTrackerState extends State<TaskTracker> {
         elevation: 0.5,
         leading: const BackArrow(widget: Home()),
         actions: const <Widget>[
-          Logout(),
+          Padding(
+            padding: EdgeInsets.only(right: 8.0), // Adjust padding if needed
+            child: Logout(),
+          ),
         ],
       ),
 

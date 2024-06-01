@@ -170,6 +170,7 @@ class FamilyService {
     });
   }
 
+  //Getting the list of phone numbers as stream
   Future<List<int>> getNumberList(String uid) async {
     try {
       final docSnapshot =
@@ -185,7 +186,7 @@ class FamilyService {
     }
   }
 
-// Get photo URLs as a stream
+  // Get photo URLs as a stream
   Stream<List<String>> getPhotoUrls(String uid) {
     return _firestore.collection('families').doc(uid).snapshots().map((doc) {
       if (doc.exists &&
@@ -198,7 +199,7 @@ class FamilyService {
     });
   }
 
-// Stream to get birthdays
+  // Stream to get birthdays
   Stream<List<Birthday>> getBirthdays(String uid) {
     return _firestore
         .collection('families')

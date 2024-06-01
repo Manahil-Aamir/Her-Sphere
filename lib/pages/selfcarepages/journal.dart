@@ -28,7 +28,7 @@ class _JournalState extends ConsumerState<Journal> {
   final user = FirebaseAuth.instance.currentUser!;
   late final tProvider = StateProvider<String>((ref) => '');
   
-  //Adding a new task in todo list
+  //Adding a new journal
   void _addEntry (String str) { 
     if(str!=''){
     DateTime now = DateTime.now();
@@ -38,18 +38,18 @@ class _JournalState extends ConsumerState<Journal> {
     }
   }
 
-  //Removing a task in todo list
+  //Removing a journal
   void _removeEntry (String jDoc) { 
     ref.read(selfCareNotifierProvider.notifier).removeJournal(user.uid, jDoc);
   }
 
-  String formatDate(DateTime date) {
-  // Define the date format
-  final DateFormat formatter = DateFormat('dd/MM/yyyy');
-  
+    
   // Format the date
+  String formatDate(DateTime date) {
+  final DateFormat formatter = DateFormat('dd/MM/yyyy');
   return formatter.format(date);
 }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,6 +67,8 @@ class _JournalState extends ConsumerState<Journal> {
               Expanded(
                 child: Consumer(
                   builder: (context, watch, _) {
+
+                    //Printing out journals
                     final journalsAsyncValue = ref.watch(journalsStreamProvider(user.uid));
                     return journalsAsyncValue.when(
                       data: (journalList) {
@@ -74,6 +76,7 @@ class _JournalState extends ConsumerState<Journal> {
                           itemCount: journalList.length,
                           itemBuilder: (BuildContext context, int index) {
                             return GestureDetector(
+                              //View entire entry
                               onTap: () {
                                 showDialog(
                                   context: context,
@@ -132,6 +135,7 @@ class _JournalState extends ConsumerState<Journal> {
           ),
         ),
       ),
+      //Add a new journal
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
         onPressed: () {

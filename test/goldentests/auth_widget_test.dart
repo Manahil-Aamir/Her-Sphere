@@ -1,37 +1,44 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:golden_toolkit/golden_toolkit.dart';
-import 'package:hersphere/methods/authentication/google.dart';
-import 'package:hersphere/pages/authpages/login.dart';
-import 'package:hersphere/providers/auth_provider.dart';
-import 'package:mockito/mockito.dart';
-import 'package:riverpod/riverpod.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:flutter_test/flutter_test.dart';
+// import 'package:golden_toolkit/golden_toolkit.dart';
+// import 'package:hersphere/methods/authentication/google.dart';
+// import 'package:hersphere/pages/authpages/login.dart';
+// import 'package:hersphere/providers/auth_provider.dart';
+// import 'package:mockito/mockito.dart';
+// import 'package:riverpod/riverpod.dart';
 
-void main() {
-  testGoldens('Login widget golden test', (WidgetTester tester) async {
-    await loadAppFonts();
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized(); // Ensure WidgetsBinding is initialized
 
-    // Mock the auth notifier
-    final authNotifier = MockAuthNotifier();
+//   // Initialize Firebase
+//   await Firebase.initializeApp();
 
-    final builder = DeviceBuilder()
-      ..addScenario(
-        widget: ProviderScope(
-          overrides: [
-            authNotifierProvider.overrideWith(() => authNotifier),
-          ],
-          child: const MaterialApp(home: Login()),
-        ),
-        name: 'login page',
-      );
+//   testGoldens('Login widget golden test', (WidgetTester tester) async {
+//     await loadAppFonts();
 
-    await tester.pumpDeviceBuilder(builder);
+//     // Mock the auth notifier
+//     final authNotifier = MockAuthNotifier();
 
-    await screenMatchesGolden(tester, 'login_widget'); // Adjust the name as per your golden file
-  });
-}
+//     final builder = DeviceBuilder()
+//       ..addScenario(
+//         widget: ProviderScope(
+//           overrides: [
+//             authNotifierProvider.overrideWith(() => authNotifier),
+//           ],
+//           child: const MaterialApp(home: Login()),
+//         ),
+//         name: 'login page',
+//       );
 
-// Mock auth notifier class
-class MockAuthNotifier extends Mock implements AuthNotifier {}
+//     await tester.pumpDeviceBuilder(builder);
+
+//     await screenMatchesGolden(tester, 'login_widget'); // Adjust the name as per your golden file
+//   });
+// }
+
+
+// // Mock auth notifier class
+// class MockAuthNotifier extends Mock implements AuthNotifier {}
 

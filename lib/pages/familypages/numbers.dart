@@ -19,7 +19,8 @@ class Numbers extends ConsumerStatefulWidget {
 class _NumbersState extends ConsumerState<Numbers> {
   final user = FirebaseAuth.instance.currentUser!;
   int tempNumber = 0;
-
+  
+  //Adds a new phone number to the list
   void _addNumber(BuildContext context, WidgetRef ref) async {
     final numbersAsyncValue = ref.watch(numbersStreamProvider(user.uid));
 
@@ -29,6 +30,8 @@ class _NumbersState extends ConsumerState<Numbers> {
           showDialog(
             context: context,
             builder: (BuildContext context) {
+
+              // Show an alert dialog if the list is full
               return const AlertDialog(
                 title: Text(
                   'Cannot enter more Numbers',
@@ -46,6 +49,7 @@ class _NumbersState extends ConsumerState<Numbers> {
             context: context,
             builder: (BuildContext context) {
               String? phoneNumber;
+              // Show a dialog to enter a new phone number
               return AlertDialog(
                 title: const Text(
                   'Enter Mobile Number',
@@ -72,8 +76,9 @@ class _NumbersState extends ConsumerState<Numbers> {
                         autoValidateMode: AutovalidateMode.onUserInteraction,
                         onInputValidated: (bool value) {
                           if (!value) {
+                            // Reset phoneNumber if input is invalid
                             phoneNumber =
-                                null; // Reset phoneNumber if input is invalid
+                                null; 
                           }
                         },
                       ),
@@ -89,8 +94,9 @@ class _NumbersState extends ConsumerState<Numbers> {
                             .addNumber(user.uid, int.parse(phoneNumber!));
                         Navigator.pop(context);
                       } else {
+                        // Close dialog before showing SnackBar
                         Navigator.pop(
-                            context); // Close dialog before showing SnackBar
+                            context); 
                         showDialog(
                             context: context,
                             builder: (BuildContext context) {

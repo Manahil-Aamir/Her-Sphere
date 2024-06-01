@@ -56,18 +56,18 @@ class _DailyState extends ConsumerState<Daily> {
     }
   }
 
-  // Hardcoded list of questions
+// Hardcoded list of questions
   List<String> questions = [
-    "Have you stretched your body for 5-10 minutes today?",
-    "Did you drink a glass of water after waking up?",
-    "What are three things you're grateful for today?",
-    "Have you taken a few minutes to practice deep breathing exercises?",
-    "Did you take a short walk outside during a break?",
-    "Have you had a serving of fruits or vegetables today?",
-    "What new thing have you learned in the last 10-15 minutes?",
-    "Have you done something kind for someone unexpectedly today?",
-    "Before bed, reflect on one positive thing and one area for improvement from your day.",
-    "Have you spent at least 30 minutes away from screens before bedtime?",
+    "Did you get at least 7 hours of sleep last night?",
+    "Did you take a moment to meditate or relax today?",
+    "Did you avoid sugary snacks today?",
+    "Have you complimented someone today?",
+    "Did you spend some time outdoors today?",
+    "Have you read a book or article today?",
+    "Did you avoid using your phone during meals?",
+    "Have you completed a task you’ve been putting off?",
+    "Did you express gratitude to someone today?",
+    "Have you laughed or smiled genuinely today?",
   ];
 
   // Function to calculate progress
@@ -107,6 +107,7 @@ class _DailyState extends ConsumerState<Daily> {
 
                         return Column(
                           children: [
+                            //Progress bar for evaluation
                             LinearProgressIndicator(
                               value: _calculateProgress(),
                               minHeight: 10.0,
@@ -119,6 +120,7 @@ class _DailyState extends ConsumerState<Daily> {
                                   List.generate(questions.length, (index) {
                                 return Padding(
                                   padding: const EdgeInsets.all(5.0),
+                                  //Question along with checkbox
                                   child: ListTile(
                                     shape: RoundedRectangleBorder(
                                       borderRadius:
