@@ -57,6 +57,8 @@ dependencies:
   google_sign_in: ^6.2.1
   riverpod_annotation: ^2.3.5
   firebase_storage: ^11.7.7
+  fake_cloud_firestore: ^2.5.2
+  firebase_core_platform_interface: ^5.0.0
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +72,7 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   mockito: ^5.4.4
   golden_toolkit: ^0.15.0
+  mocktail: ^1.0.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

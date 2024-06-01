@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -300,7 +301,7 @@ class _HydrationState extends ConsumerState<Hydration> {
         return Scaffold(
           backgroundColor: const Color(0xFFBCF7C5),
           appBar: const AppBarWidget(
-            text: 'Hydration Reminder',
+            text: 'Hydration',
             color: Color(0xFFBCF7C5),
             back: SelfCare(),
           ),
@@ -312,6 +313,15 @@ class _HydrationState extends ConsumerState<Hydration> {
                 // Toggle button to enable/disable notifications
                 Row(
                   children: [
+                    const Text(
+                      'Notify:  ',
+                      style: TextStyle(
+                        fontFamily: 'OtomanopeeOne',
+                        fontSize: 23.0,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF726662),
+                      ),
+                    ),
                     const Text(
                       'off',
                       style: TextStyle(
@@ -382,7 +392,7 @@ class _HydrationState extends ConsumerState<Hydration> {
                         _editTime(true, false, TimeOfDay.fromDateTime(selfCareModel.sleep), selfCareModel.notify);
                       },
                       icon: const Icon(
-                        Icons.time_to_leave,
+                        CupertinoIcons.alarm,
                         color: Color(0xFF726662),
                       ),
                     ),
@@ -401,7 +411,7 @@ class _HydrationState extends ConsumerState<Hydration> {
                         color: Color(0xFF726662),
                       ),
                     ),
-                    const SizedBox(width: 15),
+                    const SizedBox(width: 44),
                     Container(
                       height: 25,
                       width: 50,
@@ -425,8 +435,9 @@ class _HydrationState extends ConsumerState<Hydration> {
                         _editTime(false, true, TimeOfDay.fromDateTime(selfCareModel.wakeup), selfCareModel.notify);
                       },
                       icon: const Icon(
-                        Icons.time_to_leave,
+                        CupertinoIcons.moon_zzz,
                         color: Color(0xFF726662),
+                        size: 30
                       ),
                     ),
                   ],

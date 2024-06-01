@@ -190,30 +190,31 @@ class _SOSState extends ConsumerState<SOS> {
     );
   }
 
-Future<List<int>> fetchNumbers(String uid, WidgetRef ref) async {
-  final numbersAsyncValue = await ref.read(numbersStreamProvider(uid).future);
-  return numbersAsyncValue;
-}
-
-Future<void> sendSMSWithNumbers(String message, List<int> numbers) async {
-  try {
-    List<String> recipientStrings = numbers.map((number) => number.toString()).toList();
-    String result = await sendSMS(message: message, recipients: recipientStrings);
-    print(result);
-  } catch (error) {
-    print('Failed to send SMS: $error');
+  Future<List<int>> fetchNumbers(String uid, WidgetRef ref) async {
+    final numbersAsyncValue = await ref.read(numbersStreamProvider(uid).future);
+    return numbersAsyncValue;
   }
-}
 
-void _sendSMS(String message) async {
-  try {
-    final numbers = await fetchNumbers(user.uid, ref);
-    await sendSMSWithNumbers(message, numbers);
-  } catch (error) {
-    print('Error: $error');
+  Future<void> sendSMSWithNumbers(String message, List<int> numbers) async {
+    try {
+      List<String> recipientStrings =
+          numbers.map((number) => number.toString()).toList();
+      String result =
+          await sendSMS(message: message, recipients: recipientStrings);
+      print(result);
+    } catch (error) {
+      print('Failed to send SMS: $error');
+    }
   }
-}
 
+  void _sendSMS(String message) async {
+    try {
+      final numbers = await fetchNumbers(user.uid, ref);
+      await sendSMSWithNumbers(message, numbers);
+    } catch (error) {
+      print('Error: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

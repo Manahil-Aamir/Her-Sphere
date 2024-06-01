@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hersphere/pages/impwidgets/appbar.dart';
 import 'package:hersphere/pages/tasktrackerpages/tasktracker.dart';
+import 'package:hersphere/providers/task_provider.dart';
 import 'package:hersphere/providers/taskinstance_provider.dart';
 import 'package:hersphere/providers/taskstream_provider.dart';
-import 'package:hersphere/repository/taskservice.dart';
-
+import 'package:hersphere/services/taskservice.dart';
 
 class ToDo extends ConsumerStatefulWidget {
   const ToDo({Key? key}) : super(key: key);
@@ -33,7 +33,7 @@ class _ToDoState extends ConsumerState<ToDo> {
     _textEditingController.dispose();
     super.dispose();
   }
-  
+
   //Add task
   void _addTask(String str) {
     if (str.isNotEmpty) {
@@ -52,7 +52,7 @@ class _ToDoState extends ConsumerState<ToDo> {
     return Scaffold(
       backgroundColor: const Color(0xFFB5EFFC),
       appBar: const AppBarWidget(
-        text: 'TO-Do',
+        text: 'To-Do',
         color: Color(0xFFB5EFFC),
         back: TaskTracker(),
       ),
@@ -63,7 +63,8 @@ class _ToDoState extends ConsumerState<ToDo> {
             Expanded(
               child: Consumer(
                 builder: (context, ref, child) {
-                  final toDosAsyncValue = ref.watch(toDosStreamProvider(user.uid));
+                  final toDosAsyncValue =
+                      ref.watch(toDosStreamProvider(user.uid));
                   return toDosAsyncValue.when(
                     data: (toDos) {
                       return ListView.builder(
@@ -73,7 +74,7 @@ class _ToDoState extends ConsumerState<ToDo> {
                           return Padding(
                             padding: const EdgeInsets.all(5.0),
 
-                            //Printing out todo with checkbbbbbox
+                            // Printing out todo with checkbox
                             child: ListTile(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -81,7 +82,8 @@ class _ToDoState extends ConsumerState<ToDo> {
                               leading: Checkbox(
                                 value: task.check,
                                 onChanged: (value) {
-                                  _taskService.updateToDoChecked(task.id, !task.check);
+                                  _taskService.updateToDoChecked(
+                                      task.id, !task.check);
                                   ref.refresh(toDosStreamProvider(user.uid));
                                 },
                               ),
@@ -92,30 +94,112 @@ class _ToDoState extends ConsumerState<ToDo> {
                                 icon: const Icon(Icons.delete),
                               ),
                               tileColor: Colors.white,
-                              title: Text(
-                                task.data,
-                                style: TextStyle(
-                                  fontFamily: 'OtomanopeeOne',
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF726662),
-                                  decoration: task.check ? TextDecoration.lineThrough : TextDecoration.none,
+                              title: GestureDetector(
+                                onTap: () {
+                                  _textEditingController.text = task.data;
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      //Updating todo
+                                      return AlertDialog(
+                                        title: const Text(
+                                          'Update Task',
+                                          style: TextStyle(
+                                            fontFamily: 'OtomanopeeOne',
+                                            fontSize: 20.0,
+                                            color: Color(0xFF726662),
+                                          ),
+                                        ),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            TextField(
+                                              controller:
+                                                  _textEditingController,
+                                              maxLength: 30,
+                                              decoration: const InputDecoration(
+                                                labelText: 'Edit To-Do',
+                                                labelStyle: TextStyle(
+                                                  fontFamily: 'OtomanopeeOne',
+                                                  fontSize: 13.0,
+                                                  color: Color(0xFF726662),
+                                                ),
+                                              ),
+                                              onChanged: (value) {},
+                                            ),
+                                          ],
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                              _textEditingController.clear();
+                                            },
+                                            child: const Text(
+                                              'Cancel',
+                                              style: TextStyle(
+                                                fontFamily: 'OtomanopeeOne',
+                                                fontSize: 15.0,
+                                                color: Color(0xFF726662),
+                                              ),
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              ref
+                                                  .read(taskNotifierProvider
+                                                      .notifier)
+                                                  .UpdateTodo(
+                                                      task.id,
+                                                      _textEditingController
+                                                          .text,
+                                                      false);
+                                              Navigator.pop(context);
+                                              ref.refresh(toDosStreamProvider(
+                                                  user.uid));
+                                            },
+                                            child: const Text(
+                                              'Update',
+                                              style: TextStyle(
+                                                fontFamily: 'OtomanopeeOne',
+                                                fontSize: 15.0,
+                                                color: Color(0xFF726662),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Text(
+                                  task.data,
+                                  style: TextStyle(
+                                    fontFamily: 'OtomanopeeOne',
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFF726662),
+                                    decoration: task.check
+                                        ? TextDecoration.lineThrough
+                                        : TextDecoration.none,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                                textAlign: TextAlign.center,
                               ),
                             ),
                           );
                         },
                       );
                     },
-                    loading: () => const Center(child: CircularProgressIndicator()),
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
                     error: (error, stack) => Text('Error: $error'),
                   );
                 },
               ),
             ),
 
-            //Adding a new todo
+            // Adding a new todo
             Align(
               alignment: Alignment.bottomRight,
               child: FloatingActionButton(
@@ -204,4 +288,3 @@ class _ToDoState extends ConsumerState<ToDo> {
     );
   }
 }
-

@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hersphere/models/taskmodel.dart';
 import 'package:hersphere/models/todosmodel.dart';
 import 'package:hersphere/providers/taskinstance_provider.dart';
-import 'package:hersphere/repository/taskservice.dart';
+import 'package:hersphere/services/taskservice.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'task_provider.g.dart';
@@ -59,6 +59,15 @@ class TaskNotifier extends _$TaskNotifier {
   Future<void> removeToDo(String taskId, String toDoId) async {
     try {
       await _taskService.removeToDo(taskId, toDoId);
+      _fetchAllTasks();
+    } catch (error) {
+      print('Error removing ToDo: $error');
+    }
+  }
+
+    Future<void> UpdateTodo(String todoId, String data, bool check) async {
+    try {
+      await _taskService.updateToDo(todoId, data, check);
       _fetchAllTasks();
     } catch (error) {
       print('Error removing ToDo: $error');

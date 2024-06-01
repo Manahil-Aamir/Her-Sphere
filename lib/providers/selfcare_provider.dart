@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hersphere/providers/selfcareinstance_provider.dart';
-import 'package:hersphere/repository/selfcareservice.dart';
+import 'package:hersphere/services/selfcareservice.dart';
 import 'package:hersphere/models/selfcaremodel.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

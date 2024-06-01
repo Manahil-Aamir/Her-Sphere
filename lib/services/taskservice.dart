@@ -102,6 +102,23 @@ class TaskService {
     }
   }
 
+  // Method to update a ToDo item
+  Future<void> updateToDo(String toDoDocId, String data, bool check) async {
+    try {
+      Map<String, dynamic> updates = {};
+      
+      updates['data'] = data;
+          
+      updates['check'] = check;
+    
+      if (updates.isNotEmpty) {
+        await _firestore.collection('todos').doc(toDoDocId).update(updates);
+      }
+    } catch (error) {
+      print("Error in updateToDo: $error");
+    }
+  }
+
   Future<List<TaskModel>> getAllTasks() async {
     final snapshot = await _firestore.collection('tasks').get();
     if (snapshot.docs.isEmpty) {

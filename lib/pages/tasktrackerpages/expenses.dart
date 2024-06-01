@@ -303,7 +303,7 @@ class _ExpensesState extends ConsumerState<Expenses> {
                 style: TextStyle(
                   fontFamily: 'OtomanopeeOne',
                   fontSize: 16.0,
-                  color: Colors.white,
+                  color: Color(0xFF726662),
                 ),
               ),
             ),

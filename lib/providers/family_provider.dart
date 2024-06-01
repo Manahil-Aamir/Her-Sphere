@@ -1,5 +1,5 @@
 import 'package:hersphere/providers/familyinstance_provider.dart';
-import 'package:hersphere/repository/familyservice.dart';
+import 'package:hersphere/services/familyservice.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'family_provider.g.dart';

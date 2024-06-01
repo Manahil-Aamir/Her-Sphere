@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hersphere/methods/selfcaremethods/dailymethod.dart';
 import 'package:hersphere/providers/selfcare_provider.dart';
 import 'package:hersphere/providers/selfcarestream_provider.dart';
 import 'package:intl/intl.dart';
@@ -21,6 +22,7 @@ class _DailyState extends ConsumerState<Daily> {
   late DateFormat _dateFormat;
   final user = FirebaseAuth.instance.currentUser!;
   int _checkedCount = 0;
+  DailyMethod dm = DailyMethod();
 
   @override
   void initState() {
@@ -40,6 +42,8 @@ class _DailyState extends ConsumerState<Daily> {
   Future<void> _resetCheckboxesIfNeeded() async {
     String? lastResetDate = _prefs.getString(_lastResetDateKey);
     String currentDate = _dateFormat.format(DateTime.now());
+    print('last: ${lastResetDate}');
+    print(currentDate);
 
     // If last reset date is not today, reset checkboxes
     if (lastResetDate != currentDate) {
@@ -69,12 +73,6 @@ class _DailyState extends ConsumerState<Daily> {
     "Did you express gratitude to someone today?",
     "Have you laughed or smiled genuinely today?",
   ];
-
-  // Function to calculate progress
-  double _calculateProgress() {
-    print(_checkedCount);
-    return _checkedCount / questions.length;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,11 +107,11 @@ class _DailyState extends ConsumerState<Daily> {
                           children: [
                             //Progress bar for evaluation
                             LinearProgressIndicator(
-                              value: _calculateProgress(),
+                              value: dm.calculateProgress(_checkedCount, questions.length),
                               minHeight: 10.0,
                               backgroundColor: Colors.red,
                               valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.green),
+                                  const AlwaysStoppedAnimation<Color>(Colors.green),
                             ),
                             Column(
                               children:

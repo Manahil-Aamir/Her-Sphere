@@ -130,7 +130,7 @@ class _LoginState extends ConsumerState<Login> {
                         decoration: const InputDecoration(
                           fillColor: Colors.white,
                           filled: true,
-                          labelText: '####',
+                          labelText: '######',
                         ),
                         obscureText: true,
                         validator: (value) {

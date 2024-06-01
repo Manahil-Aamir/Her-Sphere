@@ -1,17 +1,15 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:golden_toolkit/golden_toolkit.dart';
-// import 'package:hersphere/models/todosmodel.dart';
-// import 'package:hersphere/repository/taskservice.dart';
-// import 'package:mockito/mockito.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:golden_toolkit/golden_toolkit.dart';
+import 'package:hersphere/models/todosmodel.dart';
+import 'package:hersphere/services/taskservice.dart';
+import 'package:mockito/mockito.dart';
 
-// import 'package:flutter/material.dart';
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:flutter_goldens/flutter_goldens.dart';
-// import 'package:mockito/mockito.dart';
-// import 'package:provider/provider.dart'; // Import Provider package
-// import 'package:your_app/main.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import '../firebasetest.dart';
 
 // class MockTaskService extends Mock implements TaskService {
 //   // Implement mock methods or properties if needed
@@ -22,6 +20,7 @@
 //   }
 // }
 // void main() {
+//   setupFirebaseAuthMocks();
 //   testGoldens('ToDo widget golden test', (WidgetTester tester) async {
 //     // Create mock providers
 //     final mockTaskService = MockTaskService();

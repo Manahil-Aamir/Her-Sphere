@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hersphere/methods/selfcaremethods/entrymethod.dart';
 import 'package:hersphere/pages/impwidgets/appbar.dart';
 import 'package:hersphere/pages/selfcarepages/ViewJournalEntry.dart';
 import 'package:hersphere/providers/selfcare_provider.dart';
@@ -27,6 +28,7 @@ class _JournalState extends ConsumerState<Journal> {
   String t = '';
   final user = FirebaseAuth.instance.currentUser!;
   late final tProvider = StateProvider<String>((ref) => '');
+  EntryMethod em = EntryMethod();
   
   //Adding a new journal
   void _addEntry (String str) { 
@@ -43,12 +45,6 @@ class _JournalState extends ConsumerState<Journal> {
     ref.read(selfCareNotifierProvider.notifier).removeJournal(user.uid, jDoc);
   }
 
-    
-  // Format the date
-  String formatDate(DateTime date) {
-  final DateFormat formatter = DateFormat('dd/MM/yyyy');
-  return formatter.format(date);
-}
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +95,7 @@ class _JournalState extends ConsumerState<Journal> {
                                   ),
                                   tileColor: Colors.white,
                                   title: Text(
-                                    formatDate(journalList[index].date),
+                                    em.formatDate(journalList[index].date),
                                     style: const TextStyle(
                                       fontFamily: 'Times New Roman',
                                       fontSize: 19.0,

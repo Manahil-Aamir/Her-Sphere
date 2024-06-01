@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'dart:core';
 import 'dart:math';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hersphere/methods/familymethods/birthdaymethod.dart';
 import 'package:hersphere/pages/familypages/family.dart';
 import 'package:hersphere/pages/impwidgets/appbar.dart';
 import 'package:hersphere/providers/familystream_provider.dart';
@@ -32,6 +31,7 @@ class BirthdaysState extends ConsumerState<Birthdays> {
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   bool notify = false;
   final user = FirebaseAuth.instance.currentUser!;
+  BirthdayMethods bm = BirthdayMethods();
 
   // Function to initialize the local timezone
   void initializeTimezone() {
@@ -202,6 +202,7 @@ class BirthdaysState extends ConsumerState<Birthdays> {
                   ref.read(selectedDateProvider.notifier).state =
                       tempPickedDate;
                   Navigator.of(context).pop();
+                  
                 },
               ),
             ],
@@ -278,25 +279,6 @@ class BirthdaysState extends ConsumerState<Birthdays> {
     _cancelBirthdayNotification(Birthday(name: name, date: date, id: ''));
   }
 
-  //Getting month name
-  String getMonthName(int month) {
-    final monthNames = <String>[
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
-    ];
-    return monthNames[month - 1];
-  }
-
   // Schedule notifications only for the newly added birthday, 30 minutes before the birthday
   Future<void> _scheduleBirthdayNotifications(Birthday birthday) async {
     // Get today's date
@@ -314,7 +296,7 @@ class BirthdaysState extends ConsumerState<Birthdays> {
     }
 
     // Subtract 30 minutes from the birthday date
-    var scheduledDate = birthdayThisYear.subtract(const Duration(minutes: 30));
+    var scheduledDate = birthdayThisYear.subtract(const Duration(hours: 22, minutes: 50,));
 
     initializeTimezone();
     // Get the current timezone of the mobile device
@@ -348,7 +330,8 @@ class BirthdaysState extends ConsumerState<Birthdays> {
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
       );
-
+      print('scheduled date');
+      print(scheduledDate);
       print(
           'Notification scheduled successfully for ${birthday.name} at ${scheduledDate}');
       _futureBirthdays(birthday, scheduledDate);
@@ -376,6 +359,7 @@ class BirthdaysState extends ConsumerState<Birthdays> {
       birthdayThisYear =
           DateTime(today.year + 1, birthday.date.month, birthday.date.day);
     }
+
     // Subtract 30 minutes from the birthday date
     var scheduledDate = birthdayThisYear.subtract(const Duration(minutes: 30));
 
@@ -433,36 +417,13 @@ class BirthdaysState extends ConsumerState<Birthdays> {
   //formatting a birthday
   String datetell() {
     final selectedDate = ref.read(selectedDateProvider.notifier).state;
+    print(selectedDate);
     if (selectedDate != null) {
       return '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}';
     } else
       return 'Select date';
   }
 
-  //Calculate age
-  int findAge(Birthday birthday) {
-    int i = (birthday.date.month > DateTime.now().month ||
-            (birthday.date.month == DateTime.now().month &&
-                birthday.date.day >= DateTime.now().day)
-        ? DateTime.now().year - birthday.date.year
-        : DateTime.now().year - birthday.date.year + 1);
-    return i;
-  }
-
-  //Calculate days
-  int findDays(Birthday birthday) {
-    int d = (birthday.date.month > DateTime.now().month ||
-            (birthday.date.month == DateTime.now().month &&
-                birthday.date.day >= DateTime.now().day)
-        ? DateTime(DateTime.now().year, birthday.date.month, birthday.date.day)
-            .difference(DateTime.now())
-            .inDays
-        : DateTime(
-                DateTime.now().year + 1, birthday.date.month, birthday.date.day)
-            .difference(DateTime.now())
-            .inDays);
-    return d;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -490,9 +451,9 @@ class BirthdaysState extends ConsumerState<Birthdays> {
                           itemCount: birthdayList.length,
                           itemBuilder: (BuildContext context, int index) {
                             final birthday = birthdayList[index];
-                            int age = findAge(birthday);
+                            int age = bm.findAge(birthday);
 
-                            int days = findDays(birthday);
+                            int days = bm.findDays(birthday);
 
                             return Padding(
                               padding: const EdgeInsets.all(5.0),
@@ -541,7 +502,7 @@ class BirthdaysState extends ConsumerState<Birthdays> {
                                     Column(
                                   children: [
                                     Text(
-                                      '${birthday.date.day} ${getMonthName(birthday.date.month)} ${birthday.date.year}',
+                                      '${birthday.date.day} ${bm.getMonthName(birthday.date.month)} ${birthday.date.year}',
                                       style: const TextStyle(
                                         fontFamily: 'OtomanopeeOne',
                                         fontSize: 20.0,
@@ -565,7 +526,7 @@ class BirthdaysState extends ConsumerState<Birthdays> {
                           },
                         );
                       },
-                      loading: () => const CircularProgressIndicator(),
+                      loading: () => const Center(child: CircularProgressIndicator()),
                       error: (error, stack) => Text('Error: $error'),
                     );
                   },
