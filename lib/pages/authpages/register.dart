@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hersphere/methods/authentication/auth.dart';
 import 'package:hersphere/methods/authentication/google.dart';
+import 'package:hersphere/pages/impwidgets/backarrow.dart';
+import 'package:hersphere/pages/mainpages/welcome.dart';
 import 'package:hersphere/providers/auth_provider.dart';
 
 class Register extends ConsumerStatefulWidget {
@@ -30,12 +32,7 @@ class _LoginState extends ConsumerState<Register> {
       backgroundColor: Color(0xFFFFC8D2),
       appBar: AppBar(
         backgroundColor: Color(0xFFFFC8D2),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        leading: const BackArrow(widget: Welcome()),
         elevation: 0.5,
       ),
       body: Padding(

@@ -296,7 +296,7 @@ class BirthdaysState extends ConsumerState<Birthdays> {
     }
 
     // Subtract 30 minutes from the birthday date
-    var scheduledDate = birthdayThisYear.subtract(const Duration(hours: 22, minutes: 50,));
+    var scheduledDate = birthdayThisYear.subtract(const Duration(minutes: 30));
 
     initializeTimezone();
     // Get the current timezone of the mobile device

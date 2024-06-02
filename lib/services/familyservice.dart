@@ -231,6 +231,20 @@ class FamilyService {
           }
         }
 
+        // Sort the birthdays list by month and date in ascending order
+        birthdays.sort((a, b) {
+          final aMonth = a.date.month;
+          final aDay = a.date.day;
+          final bMonth = b.date.month;
+          final bDay = b.date.day;
+
+          if (aMonth != bMonth) {
+            return aMonth.compareTo(bMonth);
+          } else {
+            return aDay.compareTo(bDay);
+          }
+        });
+
         return birthdays;
       } else {
         return []; // Return an empty list if the field doesn't exist or is null

@@ -22,7 +22,7 @@
    <application
         android:label="Her Sphere"
         android:name="${applicationName}"
-        android:icon="@drawable/girlicon">
+        android:icon="@drawable/hersphereicon">
         <activity
             android:name=".MainActivity"
             android:exported="true"
