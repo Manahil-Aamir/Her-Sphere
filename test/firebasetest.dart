@@ -1,7 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:firebase_core_platform_interface/firebase_core_platform_interface.dart';
 
 void setupFirebaseMocks() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -10,9 +8,9 @@ void setupFirebaseMocks() {
     'plugins.flutter.io/firebase_core',
   );
 
-  // ignore: deprecated_member_use
-  channel.setMockMethodCallHandler((MethodCall methodCall) async {
+  channel.setMethodCallHandler((MethodCall methodCall) async {
     if (methodCall.method == 'Firebase#initializeCore') {
+      print('first');
       return {
         'name': '[DEFAULT]',
         'options': {
@@ -25,6 +23,7 @@ void setupFirebaseMocks() {
       };
     }
     if (methodCall.method == 'Firebase#initializeApp') {
+      print('second');
       return {
         'name': '[DEFAULT]',
         'options': {
@@ -35,6 +34,7 @@ void setupFirebaseMocks() {
         },
       };
     }
+    print('third');
     return null;
   });
 }

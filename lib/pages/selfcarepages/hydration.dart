@@ -186,7 +186,7 @@ class _HydrationState extends ConsumerState<Hydration> {
             priority: Priority.high,
             importance: Importance.max,
             playSound: true,
-            icon: 'girlicon',
+            icon: 'hersphereicon',
           ),
         ),
         androidAllowWhileIdle: true,

@@ -312,6 +312,7 @@ class BirthdaysState extends ConsumerState<Birthdays> {
       'Channel description',
       importance: Importance.max,
       priority: Priority.high,
+      icon: 'hersphereicon',
     );
 
     // Create notification details
@@ -377,6 +378,7 @@ class BirthdaysState extends ConsumerState<Birthdays> {
       'Channel description',
       importance: Importance.max,
       priority: Priority.high,
+      icon: 'hersphereicon',
     );
 
     // Create notification details

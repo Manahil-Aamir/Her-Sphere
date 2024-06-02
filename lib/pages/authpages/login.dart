@@ -54,7 +54,7 @@ class _LoginState extends ConsumerState<Login> {
                           'LOGIN',
                           style: TextStyle(
                             fontFamily: 'OtomanopeeOne',
-                            fontSize: 50.0,
+                            fontSize: 50,
                             foreground: Paint()
                               ..style = PaintingStyle.stroke
                               ..strokeWidth = 2.0
@@ -236,7 +236,7 @@ class _LoginState extends ConsumerState<Login> {
                     ),
                   ),
                   child: const Text(
-                    'New? Create a new account',
+                    'New? Create Account',
                     style: TextStyle(
                       color: Color(0xFF716562),
                       fontSize: 25,

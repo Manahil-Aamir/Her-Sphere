@@ -18,11 +18,11 @@ class _FamilyPageState extends State<FamilyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF9CFFD),
+      backgroundColor: const Color(0xFFF9CFFD),
 
       //App Bar with 'Logout' button and back arrow to 'Home'
       appBar: AppBar(
-        backgroundColor: Color(0xFFF9CFFD),
+        backgroundColor: const Color(0xFFF9CFFD),
         elevation: 0.5,
         leading: const BackArrow(widget: Home()),
         actions: const <Widget>[
