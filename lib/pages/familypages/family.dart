@@ -45,8 +45,8 @@ class _FamilyPageState extends State<FamilyPage> {
                   child: Transform(
                     transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(-0.23),
                     child: Container(
-                      width: 200.0,
-                      height: 150.0,
+                      width: 180.0,
+                      height: 130.0,
                       decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage('assets/images/family1.png'),
@@ -107,7 +107,7 @@ class _FamilyPageState extends State<FamilyPage> {
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: Container(
-                    width: 250.0,
+                    width: 200.0,
                     height: 280.0,
                     decoration: const BoxDecoration(
                       image: DecorationImage(

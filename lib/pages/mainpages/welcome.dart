@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hersphere/pages/impwidgets/button.dart';
 import 'package:hersphere/pages/authpages/login.dart';
 import 'package:hersphere/pages/authpages/register.dart';
@@ -19,7 +20,7 @@ return Scaffold(
   body: SafeArea(
     child: Padding(
       // Add padding to all widgets
-      padding: EdgeInsets.fromLTRB(12.0, 4.0, 12.0, 4.0),
+      padding: EdgeInsets.fromLTRB(12.0, .0, 12.0, 4.0),
       // Creating a Column widget to stack child widgets vertically
       child: Column(
         children: [
@@ -63,7 +64,7 @@ return Scaffold(
                     ),
                   ),
                   // Text with font color
-                  Text(
+                  const Text(
                     'HER SPHERE',
                     style: TextStyle(
                       fontFamily: 'OtomanopeeOne',
@@ -82,37 +83,41 @@ return Scaffold(
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Stack(
-                children:
-                [
-                  // Text with stroke (boundary)
-                  Text(
-                  'a woman’s companion to balance it all',
-                  style: TextStyle(
-                    fontFamily: 'Birthstone',
-                    fontWeight: FontWeight.bold,
-                    fontSize: 25.0,
-                    letterSpacing: 1.0,
-                    foreground: Paint()
-                      ..style = PaintingStyle.stroke
-                      ..strokeWidth = 1.5
-                      ..color = Colors.white,
+              Expanded(
+                child: Center(
+                  child: Stack(
+                    children:
+                    [
+                      // Text with stroke (boundary)
+                      Text(
+                      'a woman’s companion to balance it all',
+                      style: TextStyle(
+                        fontFamily: 'Birthstone',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25.0,
+                        letterSpacing: 1.0,
+                        foreground: Paint()
+                          ..style = PaintingStyle.stroke
+                          ..strokeWidth = 1.5
+                          ..color = Colors.white,
+                        ),
+                      ),
+                            
+                      // Text with font color
+                      Text(
+                      'a woman’s companion to balance it all',
+                      style: TextStyle(
+                        fontFamily: 'Birthstone',
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF726662),
+                        fontSize: 25.0,
+                        letterSpacing: 1.0,
+                      ),
+                      textAlign: TextAlign.center, // Center the text
                     ),
+                    ],
                   ),
-
-                  // Text with font color
-                  Text(
-                  'a woman’s companion to balance it all',
-                  style: TextStyle(
-                    fontFamily: 'Birthstone',
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF726662),
-                    fontSize: 25.0,
-                    letterSpacing: 1.0,
-                  ),
-                  textAlign: TextAlign.center, // Center the text
                 ),
-                ],
               ),
             ],
           ),

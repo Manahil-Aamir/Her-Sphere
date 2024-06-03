@@ -33,7 +33,7 @@ class _SelfCareState extends State<SelfCare> {
 
       body: SafeArea(
         child: Padding(
-          padding:  const EdgeInsets.fromLTRB(0.0, 10.0, 12.0, 4.0),
+          padding:  const EdgeInsets.fromLTRB(0.0, 13.0, 12.0, 4.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -102,15 +102,15 @@ class _SelfCareState extends State<SelfCare> {
               // Displaying a 'SOS' option Button
               const OptionButton(text: 'DAILY PLAN', widget: Daily()),
 
-              const SizedBox(height: 100),
+              const SizedBox(height: 60),
 
               // Placing an image on bottom-right side
               Expanded(
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: Container(
-                    width: 160.0,
-                    height: 450.0,
+                    width: 170.0,
+                    height: 700.0,
                     decoration: const BoxDecoration(
                       image: DecorationImage(
                         image: AssetImage('assets/images/selfcare2.png'),

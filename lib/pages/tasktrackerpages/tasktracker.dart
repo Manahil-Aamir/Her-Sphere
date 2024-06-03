@@ -46,8 +46,8 @@ class _TaskTrackerState extends State<TaskTracker> {
               child: Transform(
                   transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(0.22),
                   child: Container(
-                    width: 116,
-                    height: 118,
+                    width: 130,
+                    height: 130,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage('assets/images/tasktracker1.png'),
@@ -58,7 +58,7 @@ class _TaskTrackerState extends State<TaskTracker> {
               ),
             ),
 
-              const SizedBox(height: 73), // Add spacing between widgets
+              const SizedBox(height: 60), // Add spacing between widgets
 
               //UI for 'TASK TRACKER' category
               Row(
@@ -120,8 +120,8 @@ class _TaskTrackerState extends State<TaskTracker> {
                 child: Align(
                   alignment: Alignment.bottomLeft,
                   child: Container(
-                    width: 185.0,
-                    height: 230.0,
+                    width: 160.0,
+                    height: 180.0,
                     decoration: const BoxDecoration(
                       image: DecorationImage(
                         image: AssetImage('assets/images/tasktracker2.png'),

@@ -49,7 +49,7 @@ class _HomeState extends State<Home> {
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Container(
-                    width: 182.0,
+                    width: 164.0,
                     height: 200.0,
                     decoration: const BoxDecoration(
                       image: DecorationImage(
