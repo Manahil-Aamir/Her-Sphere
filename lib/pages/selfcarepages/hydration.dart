@@ -288,167 +288,175 @@ class _HydrationState extends ConsumerState<Hydration> {
   Widget build(BuildContext context) {
     final hydrationStream = ref.watch(hydrationStreamProvider(user.uid));
 
-    return hydrationStream.when(
-      data: (selfCareModel) {
-        print('hi');
-        final start = TimeOfDay.fromDateTime(selfCareModel.wakeup);
-        final end = TimeOfDay.fromDateTime(selfCareModel.sleep);
-        final notify = selfCareModel.notify;
-        //ref.read(startProvider.notifier).state = start;
-        //ref.read(endProvider.notifier).state = end;
-        //ref.read(switchValueProvider.notifier).state = notify;
-
-        return Scaffold(
-          backgroundColor: const Color(0xFFBCF7C5),
-          appBar: const AppBarWidget(
-            text: 'Hydration',
-            color: Color(0xFFBCF7C5),
-            back: SelfCare(),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Toggle button to enable/disable notifications
-                Row(
-                  children: [
-                    const Text(
-                      'Notify:  ',
-                      style: TextStyle(
-                        fontFamily: 'OtomanopeeOne',
-                        fontSize: 23.0,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF726662),
-                      ),
-                    ),
-                    const Text(
-                      'off',
-                      style: TextStyle(
-                        fontFamily: 'OtomanopeeOne',
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF726662),
-                      ),
-                    ),
-                    Switch(
-                      value: notify,
-                      onChanged: (value) {
-                        ref
-                            .read(selfCareNotifierProvider.notifier)
-                            .updateNotify(user.uid, value);
-                        if (value) {
-                          scheduleNotifications(start, end);
-                        } else {
-                          cancelAllNotifications();
-                        }
-                      },
-                    ),
-                    const Text(
-                      'on',
-                      style: TextStyle(
-                        fontFamily: 'OtomanopeeOne',
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF726662),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 30.0),
-                // Setting the wakeup time
-                Row(
-                  children: [
-                    const Text(
-                      'WakeUp Time:',
-                      style: TextStyle(
-                        fontFamily: 'OtomanopeeOne',
-                        fontSize: 23.0,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF726662),
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                    Container(
-                      height: 25,
-                      width: 50,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                      ),
-                      child: Text(
-                        '${start.hour}:${start.minute}',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontFamily: 'OtomanopeeOne',
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF726662),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                    IconButton(
-                      onPressed: () {
-                        _editTime(true, false, TimeOfDay.fromDateTime(selfCareModel.sleep), selfCareModel.notify);
-                      },
-                      icon: const Icon(
-                        CupertinoIcons.alarm,
-                        color: Color(0xFF726662),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 30.0),
-                // Setting the sleep time
-                Row(
-                  children: [
-                    const Text(
-                      'Sleep Time:',
-                      style: TextStyle(
-                        fontFamily: 'OtomanopeeOne',
-                        fontSize: 23.0,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF726662),
-                      ),
-                    ),
-                    const SizedBox(width: 44),
-                    Container(
-                      height: 25,
-                      width: 50,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                      ),
-                      child: Text(
-                        '${end.hour}:${end.minute}',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontFamily: 'OtomanopeeOne',
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF726662),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                    IconButton(
-                      onPressed: () {
-                        _editTime(false, true, TimeOfDay.fromDateTime(selfCareModel.wakeup), selfCareModel.notify);
-                      },
-                      icon: const Icon(
-                        CupertinoIcons.moon_zzz,
-                        color: Color(0xFF726662),
-                        size: 30
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+    return PopScope(
+                  canPop: false,
+      onPopInvoked: (didPop) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const SelfCare()),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
+      child: hydrationStream.when(
+        data: (selfCareModel) {
+          print('hi');
+          final start = TimeOfDay.fromDateTime(selfCareModel.wakeup);
+          final end = TimeOfDay.fromDateTime(selfCareModel.sleep);
+          final notify = selfCareModel.notify;
+          //ref.read(startProvider.notifier).state = start;
+          //ref.read(endProvider.notifier).state = end;
+          //ref.read(switchValueProvider.notifier).state = notify;
+      
+          return Scaffold(
+            backgroundColor: const Color(0xFFBCF7C5),
+            appBar: const AppBarWidget(
+              text: 'Hydration',
+              color: Color(0xFFBCF7C5),
+              back: SelfCare(),
+            ),
+            body: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Toggle button to enable/disable notifications
+                  Row(
+                    children: [
+                      const Text(
+                        'Notify:  ',
+                        style: TextStyle(
+                          fontFamily: 'OtomanopeeOne',
+                          fontSize: 23.0,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF726662),
+                        ),
+                      ),
+                      const Text(
+                        'off',
+                        style: TextStyle(
+                          fontFamily: 'OtomanopeeOne',
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF726662),
+                        ),
+                      ),
+                      Switch(
+                        value: notify,
+                        onChanged: (value) {
+                          ref
+                              .read(selfCareNotifierProvider.notifier)
+                              .updateNotify(user.uid, value);
+                          if (value) {
+                            scheduleNotifications(start, end);
+                          } else {
+                            cancelAllNotifications();
+                          }
+                        },
+                      ),
+                      const Text(
+                        'on',
+                        style: TextStyle(
+                          fontFamily: 'OtomanopeeOne',
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF726662),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30.0),
+                  // Setting the wakeup time
+                  Row(
+                    children: [
+                      const Text(
+                        'WakeUp Time:',
+                        style: TextStyle(
+                          fontFamily: 'OtomanopeeOne',
+                          fontSize: 23.0,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF726662),
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Container(
+                        height: 25,
+                        width: 50,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                        ),
+                        child: Text(
+                          '${start.hour}:${start.minute}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontFamily: 'OtomanopeeOne',
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF726662),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      IconButton(
+                        onPressed: () {
+                          _editTime(true, false, TimeOfDay.fromDateTime(selfCareModel.sleep), selfCareModel.notify);
+                        },
+                        icon: const Icon(
+                          CupertinoIcons.alarm,
+                          color: Color(0xFF726662),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30.0),
+                  // Setting the sleep time
+                  Row(
+                    children: [
+                      const Text(
+                        'Sleep Time:',
+                        style: TextStyle(
+                          fontFamily: 'OtomanopeeOne',
+                          fontSize: 23.0,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF726662),
+                        ),
+                      ),
+                      const SizedBox(width: 44),
+                      Container(
+                        height: 25,
+                        width: 50,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                        ),
+                        child: Text(
+                          '${end.hour}:${end.minute}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontFamily: 'OtomanopeeOne',
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF726662),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      IconButton(
+                        onPressed: () {
+                          _editTime(false, true, TimeOfDay.fromDateTime(selfCareModel.wakeup), selfCareModel.notify);
+                        },
+                        icon: const Icon(
+                          CupertinoIcons.moon_zzz,
+                          color: Color(0xFF726662),
+                          size: 30
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => Center(child: Text('Error: $error')),
+      ),
     );
   }
 }

@@ -181,143 +181,151 @@ class _PhotosState extends ConsumerState<Photos> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF9CFFD),
-      appBar: const AppBarWidget(
-        text: 'PHOTOS',
-        color: Color(0xFFF9CFFD),
-        back: FamilyPage(),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: Consumer(
-                  builder: (context, watch, _) {
-                    final photoUrlsStream =
-                        ref.watch(PhotoUrlsStreamProvider(user.uid));
-                    return photoUrlsStream.when(
-                      data: (photoUrls) {
-                        return Column(
-                          children: [
-                            Expanded(
-                              child: GridView.builder(
-                                itemCount: photoUrls.length,
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  crossAxisSpacing: 4.0,
-                                  mainAxisSpacing: 4.0,
-                                ),
-                                itemBuilder: (context, index) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      // Enlarge the selected photo on tap
-                                      Navigator.of(context)
-                                          .pushReplacement(MaterialPageRoute(
-                                        builder: (context) => ImagePreview(
-                                            image: photoUrls[index]),
-                                      ));
-                                    },
-                                    onLongPress: () {
-                                      // Provide an option to delete the selected photo
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          title: const Text(
-                                            'Delete Image',
-                                            style: TextStyle(
-                                              fontFamily: 'OtomanopeeOne',
-                                              color: Color(0xFF726662),
-                                            ),
-                                          ),
-                                          content: const Text(
-                                            'Do you want to delete this image?',
-                                            style: TextStyle(
-                                              fontFamily: 'OtomanopeeOne',
-                                              fontSize: 13.0,
-                                              color: Color(0xFF726662),
-                                            ),
-                                          ),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text(
-                                                'Cancel',
-                                                style: TextStyle(
-                                                  fontFamily: 'OtomanopeeOne',
-                                                  fontSize: 11.0,
-                                                  color: Color(0xFF726662),
-                                                ),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const FamilyPage()),
+        );
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF9CFFD),
+        appBar: const AppBarWidget(
+          text: 'PHOTOS',
+          color: Color(0xFFF9CFFD),
+          back: FamilyPage(),
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Expanded(
+                  child: Consumer(
+                    builder: (context, watch, _) {
+                      final photoUrlsStream =
+                          ref.watch(PhotoUrlsStreamProvider(user.uid));
+                      return photoUrlsStream.when(
+                        data: (photoUrls) {
+                          return Column(
+                            children: [
+                              Expanded(
+                                child: GridView.builder(
+                                  itemCount: photoUrls.length,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    crossAxisSpacing: 4.0,
+                                    mainAxisSpacing: 4.0,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        // Enlarge the selected photo on tap
+                                        Navigator.of(context)
+                                            .pushReplacement(MaterialPageRoute(
+                                          builder: (context) => ImagePreview(
+                                              image: photoUrls[index]),
+                                        ));
+                                      },
+                                      onLongPress: () {
+                                        // Provide an option to delete the selected photo
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: const Text(
+                                              'Delete Image',
+                                              style: TextStyle(
+                                                fontFamily: 'OtomanopeeOne',
+                                                color: Color(0xFF726662),
                                               ),
                                             ),
-                                            TextButton(
-                                              onPressed: () {
-                                                deleteImage(photoUrls[index]);
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text(
-                                                'Delete',
-                                                style: TextStyle(
-                                                  fontFamily: 'OtomanopeeOne',
-                                                  fontSize: 11.0,
-                                                  color: Color(0xFF726662),
-                                                ),
+                                            content: const Text(
+                                              'Do you want to delete this image?',
+                                              style: TextStyle(
+                                                fontFamily: 'OtomanopeeOne',
+                                                fontSize: 13.0,
+                                                color: Color(0xFF726662),
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                    //Formatting to display the photo
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(
-                                            8.0), // Border radius
-                                        border: Border.all(
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text(
+                                                  'Cancel',
+                                                  style: TextStyle(
+                                                    fontFamily: 'OtomanopeeOne',
+                                                    fontSize: 11.0,
+                                                    color: Color(0xFF726662),
+                                                  ),
+                                                ),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  deleteImage(photoUrls[index]);
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text(
+                                                  'Delete',
+                                                  style: TextStyle(
+                                                    fontFamily: 'OtomanopeeOne',
+                                                    fontSize: 11.0,
+                                                    color: Color(0xFF726662),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                      //Formatting to display the photo
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                              8.0), // Border radius
+                                          border: Border.all(
+                                            color: const Color(
+                                                0xFF726662), // Border color
+                                            width: 1.0, // Border width
+                                          ),
                                           color: const Color(
-                                              0xFF726662), // Border color
-                                          width: 1.0, // Border width
+                                              0xFF726662), // Background color
                                         ),
-                                        color: const Color(
-                                            0xFF726662), // Background color
+                                        child: Image.network(
+                                          photoUrls[index],
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
-                                      child: Image.network(
-                                        photoUrls[index],
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  );
-                                },
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
-                          ],
-                        );
-                      },
-                      loading: () => const CircularProgressIndicator(),
-                      error: (error, stack) => Text('Error: $error'),
-                    );
-                  },
+                            ],
+                          );
+                        },
+                        loading: () => const CircularProgressIndicator(),
+                        error: (error, stack) => Text('Error: $error'),
+                      );
+                    },
+                  ),
                 ),
-              ),
-              // Option of adding a new photo
-              Align(
-                alignment: Alignment.bottomRight,
-                child: FloatingActionButton(
-                  backgroundColor: Colors.white,
-                  onPressed: () {
-                    pick = true;
-                    _checkPhotoPermission(pick);
-                    pick = false;
-                  },
-                  child: const Icon(Icons.add, color: Color(0xFF726662)),
+                // Option of adding a new photo
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: FloatingActionButton(
+                    backgroundColor: Colors.white,
+                    onPressed: () {
+                      pick = true;
+                      _checkPhotoPermission(pick);
+                      pick = false;
+                    },
+                    child: const Icon(Icons.add, color: Color(0xFF726662)),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

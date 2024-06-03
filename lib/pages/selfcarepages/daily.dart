@@ -76,88 +76,98 @@ class _DailyState extends ConsumerState<Daily> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFBCF7C5),
-      appBar: const AppBarWidget(
-        text: 'DAILY PLAN',
-        color: Color(0xFFBCF7C5),
-        back: SelfCare(),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.stretch, // Ensure children fill the width
-              children: [
-                // Creating a check on how much you have achieved for a day
-                // List of questions and their corresponding checkbox
-                Consumer(
-                  builder: (context, watch, _) {
-                    final checkedStream =
-                        ref.watch(checkedStreamProvider(user.uid));
-                    return checkedStream.when(
-                      data: (checkedList) {
-                        _checkedCount =
-                            checkedList.where((value) => value).length;
-                        print('length: ${checkedList.length}');
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const SelfCare()),
+        );
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFBCF7C5),
+        appBar: const AppBarWidget(
+          text: 'DAILY PLAN',
+          color: Color(0xFFBCF7C5),
+          back: SelfCare(),
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment
+                    .stretch, // Ensure children fill the width
+                children: [
+                  // Creating a check on how much you have achieved for a day
+                  // List of questions and their corresponding checkbox
+                  Consumer(
+                    builder: (context, watch, _) {
+                      final checkedStream =
+                          ref.watch(checkedStreamProvider(user.uid));
+                      return checkedStream.when(
+                        data: (checkedList) {
+                          _checkedCount =
+                              checkedList.where((value) => value).length;
+                          print('length: ${checkedList.length}');
 
-                        return Column(
-                          children: [
-                            //Progress bar for evaluation
-                            LinearProgressIndicator(
-                              value: dm.calculateProgress(_checkedCount, questions.length),
-                              minHeight: 10.0,
-                              backgroundColor: Colors.red,
-                              valueColor:
-                                  const AlwaysStoppedAnimation<Color>(Colors.green),
-                            ),
-                            Column(
-                              children:
-                                  List.generate(questions.length, (index) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  //Question along with checkbox
-                                  child: ListTile(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadiusDirectional.circular(10),
-                                    ),
-                                    tileColor: Colors.white.withOpacity(0.5),
-                                    title: Text(
-                                      questions[index],
-                                      style: const TextStyle(
-                                        fontFamily: 'OtomanopeeOne',
-                                        fontSize: 15.0,
-                                        color: Color(0xFF726662),
+                          return Column(
+                            children: [
+                              //Progress bar for evaluation
+                              LinearProgressIndicator(
+                                value: dm.calculateProgress(
+                                    _checkedCount, questions.length),
+                                minHeight: 10.0,
+                                backgroundColor: Colors.red,
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                    Colors.green),
+                              ),
+                              Column(
+                                children:
+                                    List.generate(questions.length, (index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    //Question along with checkbox
+                                    child: ListTile(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadiusDirectional.circular(
+                                                10),
+                                      ),
+                                      tileColor: Colors.white.withOpacity(0.5),
+                                      title: Text(
+                                        questions[index],
+                                        style: const TextStyle(
+                                          fontFamily: 'OtomanopeeOne',
+                                          fontSize: 15.0,
+                                          color: Color(0xFF726662),
+                                        ),
+                                      ),
+                                      trailing: Checkbox(
+                                        value: checkedList[index],
+                                        onChanged: (newValue) {
+                                          ref
+                                              .read(selfCareNotifierProvider
+                                                  .notifier)
+                                              .updateCheckedIndex(user.uid,
+                                                  index, !checkedList[index]);
+                                          //ref.refresh(checkedStreamProvider(user.uid));
+                                        },
                                       ),
                                     ),
-                                    trailing: Checkbox(
-                                      value: checkedList[index],
-                                      onChanged: (newValue) {
-                                        ref
-                                            .read(selfCareNotifierProvider
-                                                .notifier)
-                                            .updateCheckedIndex(user.uid, index,
-                                                !checkedList[index]);
-                                        //ref.refresh(checkedStreamProvider(user.uid));
-                                      },
-                                    ),
-                                  ),
-                                );
-                              }),
-                            ),
-                          ],
-                        );
-                      },
-                      loading: () =>
-                          const Center(child: CircularProgressIndicator()),
-                      error: (error, stackTrace) => Text('Error: $error'),
-                    );
-                  },
-                ),
-              ],
+                                  );
+                                }),
+                              ),
+                            ],
+                          );
+                        },
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+                        error: (error, stackTrace) => Text('Error: $error'),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

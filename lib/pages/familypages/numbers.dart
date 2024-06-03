@@ -158,113 +158,121 @@ class _NumbersState extends ConsumerState<Numbers> {
   Widget build(BuildContext context) {
     final numbersAsyncValue = ref.watch(NumbersStreamProvider(user.uid));
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF9CFFD),
-      appBar: AppBar(
+    return PopScope(
+                  canPop: false,
+      onPopInvoked: (didPop) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const SOS()),
+        );
+      },
+      child: Scaffold(
         backgroundColor: const Color(0xFFF9CFFD),
-        elevation: 0.5,
-        leading: const BackArrow(widget: SOS()),
-        title: Stack(
-          children: [
-            Text(
-              'SOS',
-              style: TextStyle(
-                fontFamily: 'OtomanopeeOne',
-                fontSize: 30.0,
-                foreground: Paint()
-                  ..style = PaintingStyle.stroke
-                  ..strokeWidth = 2.0
-                  ..color = Colors.white,
-              ),
-            ),
-            const Text(
-              'SOS',
-              style: TextStyle(
-                fontFamily: 'OtomanopeeOne',
-                fontSize: 30.0,
-                color: Color(0xFF726662),
-              ),
-            ),
-          ],
-        ),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
+        appBar: AppBar(
+          backgroundColor: const Color(0xFFF9CFFD),
+          elevation: 0.5,
+          leading: const BackArrow(widget: SOS()),
+          title: Stack(
             children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Text(
-                    'NUMBERS',
-                    style: TextStyle(
-                      fontFamily: 'OtomanopeeOne',
-                      fontSize: 40.0,
-                      foreground: Paint()
-                        ..style = PaintingStyle.stroke
-                        ..strokeWidth = 2.0
-                        ..color = Colors.white,
-                    ),
-                  ),
-                  const Text(
-                    'NUMBERS',
-                    style: TextStyle(
-                      fontFamily: 'OtomanopeeOne',
-                      fontSize: 40.0,
-                      color: Color(0xFF726662),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 200),
-              // Show the numbers using StreamProvider
-              Expanded(
-                child: numbersAsyncValue.when(
-                  data: (numbers) {
-                    return ListView.separated(
-                      shrinkWrap: true,
-                      itemCount: numbers.length,
-                      separatorBuilder: (BuildContext context, int index) =>
-                          const SizedBox(height: 10),
-                      itemBuilder: (BuildContext context, int index) {
-                        int mobile = numbers[index];
-                        return ListTile(
-                          tileColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(13)),
-                          textColor: const Color(0xFF726662),
-                          title: Text(
-                            mobile.toString(),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          // Delete a number
-                          trailing: IconButton(
-                            onPressed: () => _deleteNumber(mobile),
-                            icon: const Icon(Icons.delete,
-                                color: Color(0xFF726662)),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  loading: () => const CircularProgressIndicator(),
-                  error: (error, stack) => Text('Error: $error'),
+              Text(
+                'SOS',
+                style: TextStyle(
+                  fontFamily: 'OtomanopeeOne',
+                  fontSize: 30.0,
+                  foreground: Paint()
+                    ..style = PaintingStyle.stroke
+                    ..strokeWidth = 2.0
+                    ..color = Colors.white,
                 ),
               ),
-              // Option of adding a new number
-              Align(
-                alignment: Alignment.bottomRight,
-                child: FloatingActionButton(
-                  backgroundColor: Colors.white,
-                  onPressed: () => _addNumber(context, ref),
-                  child: const Icon(Icons.add, color: Color(0xFF726662)),
+              const Text(
+                'SOS',
+                style: TextStyle(
+                  fontFamily: 'OtomanopeeOne',
+                  fontSize: 30.0,
+                  color: Color(0xFF726662),
                 ),
               ),
             ],
+          ),
+          centerTitle: true,
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Text(
+                      'NUMBERS',
+                      style: TextStyle(
+                        fontFamily: 'OtomanopeeOne',
+                        fontSize: 40.0,
+                        foreground: Paint()
+                          ..style = PaintingStyle.stroke
+                          ..strokeWidth = 2.0
+                          ..color = Colors.white,
+                      ),
+                    ),
+                    const Text(
+                      'NUMBERS',
+                      style: TextStyle(
+                        fontFamily: 'OtomanopeeOne',
+                        fontSize: 40.0,
+                        color: Color(0xFF726662),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 200),
+                // Show the numbers using StreamProvider
+                Expanded(
+                  child: numbersAsyncValue.when(
+                    data: (numbers) {
+                      return ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: numbers.length,
+                        separatorBuilder: (BuildContext context, int index) =>
+                            const SizedBox(height: 10),
+                        itemBuilder: (BuildContext context, int index) {
+                          int mobile = numbers[index];
+                          return ListTile(
+                            tileColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(13)),
+                            textColor: const Color(0xFF726662),
+                            title: Text(
+                              mobile.toString(),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            // Delete a number
+                            trailing: IconButton(
+                              onPressed: () => _deleteNumber(mobile),
+                              icon: const Icon(Icons.delete,
+                                  color: Color(0xFF726662)),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    loading: () => const CircularProgressIndicator(),
+                    error: (error, stack) => Text('Error: $error'),
+                  ),
+                ),
+                // Option of adding a new number
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: FloatingActionButton(
+                    backgroundColor: Colors.white,
+                    onPressed: () => _addNumber(context, ref),
+                    child: const Icon(Icons.add, color: Color(0xFF726662)),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

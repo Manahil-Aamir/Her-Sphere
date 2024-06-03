@@ -218,77 +218,85 @@ class _SOSState extends ConsumerState<SOS> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF9CFFD),
-      //title of the screen
-      appBar: AppBar(
+    return PopScope(
+            canPop: false,
+      onPopInvoked: (didPop) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const FamilyPage()),
+        );
+      },
+      child: Scaffold(
         backgroundColor: const Color(0xFFF9CFFD),
-        elevation: 0.5,
-        //Going back to 'Family page'
-        leading: const BackArrow(widget: FamilyPage()),
-        title: Stack(
-          children: [
-            //Text with stroke (boundary)
-            Text(
-              'SOS',
-              style: TextStyle(
-                fontFamily: 'OtomanopeeOne',
-                fontSize: 30.0,
-                foreground: Paint()
-                  ..style = PaintingStyle.stroke
-                  ..strokeWidth = 2.0
-                  ..color = Colors.white,
-              ),
-            ),
-            //Text with font color
-            const Text(
-              'SOS',
-              style: TextStyle(
-                fontFamily: 'OtomanopeeOne',
-                fontSize: 30.0,
-                color: Color(0xFF726662),
-              ),
-            ),
-          ],
-        ),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            //SOS button
-            IconButton(
-              icon: Image.asset('assets/images/sos1.png'),
-              iconSize: 150.0,
-              padding: const EdgeInsets.all(40.0),
-              onPressed: () {
-                _checkPermissions();
-              },
-            ),
-            const SizedBox(height: 30),
-
-            //Adding numbers to send your location to
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFFFFFF),
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Numbers()),
-                );
-              },
-              child: const Text(
-                "Registered Numbers",
+        //title of the screen
+        appBar: AppBar(
+          backgroundColor: const Color(0xFFF9CFFD),
+          elevation: 0.5,
+          //Going back to 'Family page'
+          leading: const BackArrow(widget: FamilyPage()),
+          title: Stack(
+            children: [
+              //Text with stroke (boundary)
+              Text(
+                'SOS',
                 style: TextStyle(
                   fontFamily: 'OtomanopeeOne',
-                  fontSize: 13.0,
+                  fontSize: 30.0,
+                  foreground: Paint()
+                    ..style = PaintingStyle.stroke
+                    ..strokeWidth = 2.0
+                    ..color = Colors.white,
+                ),
+              ),
+              //Text with font color
+              const Text(
+                'SOS',
+                style: TextStyle(
+                  fontFamily: 'OtomanopeeOne',
+                  fontSize: 30.0,
                   color: Color(0xFF726662),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
+          centerTitle: true,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              //SOS button
+              IconButton(
+                icon: Image.asset('assets/images/sos1.png'),
+                iconSize: 150.0,
+                padding: const EdgeInsets.all(40.0),
+                onPressed: () {
+                  _checkPermissions();
+                },
+              ),
+              const SizedBox(height: 30),
+      
+              //Adding numbers to send your location to
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFFFFFF),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Numbers()),
+                  );
+                },
+                child: const Text(
+                  "Registered Numbers",
+                  style: TextStyle(
+                    fontFamily: 'OtomanopeeOne',
+                    fontSize: 13.0,
+                    color: Color(0xFF726662),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

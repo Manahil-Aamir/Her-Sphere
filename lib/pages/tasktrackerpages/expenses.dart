@@ -20,117 +20,125 @@ class _ExpensesState extends ConsumerState<Expenses> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: const Color(0xFFB5EFFC),
-      appBar: const AppBarWidget(
-        text: 'EXPENSES',
-        color: Color(0xFFB5EFFC),
-        back: TaskTracker(),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: Consumer(
-                builder: (context, watch, _) {
-                  final taskModelAsync =
-                      ref.watch(taskStreamProvider(user.uid));
-                  final remainingStream =
-                      ref.watch(remainingStreamProvider(user.uid));
-                  return taskModelAsync.when(
-                    data: (taskModel) {
-                      if (taskModel != null) {
-                        print(taskModel);
-                        return Column(
-                          children: [
-                            Expanded(
-                              child: GridView.count(
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 2.0,
-                                mainAxisSpacing: 2.0,
-                                childAspectRatio: 4.1 / 3,
-                                children: [
-                                  //Tiles in a grid
-                                  _buildExpenseTile(
-                                      context, 'Housing', taskModel.housing),
-                                  _buildExpenseTile(context, 'Transportation',
-                                      taskModel.transportation),
-                                  _buildExpenseTile(
-                                      context, 'Food', taskModel.food),
-                                  _buildExpenseTile(context, 'Healthcare',
-                                      taskModel.healthcare),
-                                  _buildExpenseTile(context, 'Utilities',
-                                      taskModel.utilities),
-                                  _buildExpenseTile(
-                                      context, 'Misc', taskModel.misc),
-                                  _buildTotalTile(
-                                      context, 'Total', taskModel.total),
-                                  _buildRemainingTile(
-                                      context, 'Remaining', remainingStream),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-
-                            //Creating a piechart
-                            PieChart(
-                              dataMap: {
-                                'Housing': taskModel.housing.toDouble(),
-                                'Transportation':
-                                    taskModel.transportation.toDouble(),
-                                'Food': taskModel.food.toDouble(),
-                                'Healthcare': taskModel.healthcare.toDouble(),
-                                'Utilities': taskModel.utilities.toDouble(),
-                                'Misc': taskModel.misc.toDouble(),
-                              },
-                              animationDuration:
-                                  const Duration(milliseconds: 800),
-                              chartLegendSpacing: 32.0,
-                              chartRadius:
-                                  MediaQuery.of(context).size.width / 3.2,
-                              initialAngleInDegree: 0,
-                              chartType: ChartType.disc,
-                              ringStrokeWidth: 32,
-                              centerText: "Expenses",
-                              legendOptions: const LegendOptions(
-                                showLegendsInRow: false,
-                                legendPosition: LegendPosition.right,
-                                showLegends: true,
-                                legendShape: BoxShape.circle,
-                                legendTextStyle: TextStyle(
-                                  fontWeight: FontWeight.bold,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const TaskTracker()),
+        );
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: const Color(0xFFB5EFFC),
+        appBar: const AppBarWidget(
+          text: 'EXPENSES',
+          color: Color(0xFFB5EFFC),
+          back: TaskTracker(),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            children: [
+              Expanded(
+                child: Consumer(
+                  builder: (context, watch, _) {
+                    final taskModelAsync =
+                        ref.watch(taskStreamProvider(user.uid));
+                    final remainingStream =
+                        ref.watch(remainingStreamProvider(user.uid));
+                    return taskModelAsync.when(
+                      data: (taskModel) {
+                        if (taskModel != null) {
+                          print(taskModel);
+                          return Column(
+                            children: [
+                              Expanded(
+                                child: GridView.count(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 2.0,
+                                  mainAxisSpacing: 2.0,
+                                  childAspectRatio: 4.1 / 3,
+                                  children: [
+                                    //Tiles in a grid
+                                    _buildExpenseTile(
+                                        context, 'Housing', taskModel.housing),
+                                    _buildExpenseTile(context, 'Transportation',
+                                        taskModel.transportation),
+                                    _buildExpenseTile(
+                                        context, 'Food', taskModel.food),
+                                    _buildExpenseTile(context, 'Healthcare',
+                                        taskModel.healthcare),
+                                    _buildExpenseTile(context, 'Utilities',
+                                        taskModel.utilities),
+                                    _buildExpenseTile(
+                                        context, 'Misc', taskModel.misc),
+                                    _buildTotalTile(
+                                        context, 'Total', taskModel.total),
+                                    _buildRemainingTile(
+                                        context, 'Remaining', remainingStream),
+                                  ],
                                 ),
                               ),
-                              chartValuesOptions: const ChartValuesOptions(
-                                showChartValues: true,
-                                showChartValuesInPercentage: true,
-                                showChartValuesOutside: false,
-                                decimalPlaces: 1,
+                              const SizedBox(height: 10),
+
+                              //Creating a piechart
+                              PieChart(
+                                dataMap: {
+                                  'Housing': taskModel.housing.toDouble(),
+                                  'Transportation':
+                                      taskModel.transportation.toDouble(),
+                                  'Food': taskModel.food.toDouble(),
+                                  'Healthcare': taskModel.healthcare.toDouble(),
+                                  'Utilities': taskModel.utilities.toDouble(),
+                                  'Misc': taskModel.misc.toDouble(),
+                                },
+                                animationDuration:
+                                    const Duration(milliseconds: 800),
+                                chartLegendSpacing: 32.0,
+                                chartRadius:
+                                    MediaQuery.of(context).size.width / 3.2,
+                                initialAngleInDegree: 0,
+                                chartType: ChartType.disc,
+                                ringStrokeWidth: 32,
+                                centerText: "Expenses",
+                                legendOptions: const LegendOptions(
+                                  showLegendsInRow: false,
+                                  legendPosition: LegendPosition.right,
+                                  showLegends: true,
+                                  legendShape: BoxShape.circle,
+                                  legendTextStyle: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                chartValuesOptions: const ChartValuesOptions(
+                                  showChartValues: true,
+                                  showChartValuesInPercentage: true,
+                                  showChartValuesOutside: false,
+                                  decimalPlaces: 1,
+                                ),
                               ),
-                            ),
-                          ],
-                        );
-                      } else {
-                        return const CircularProgressIndicator();
-                      }
-                    },
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
-                    error: (error, stackTrace) {
-                      return Text('Error: $error');
-                    },
-                  );
-                },
+                            ],
+                          );
+                        } else {
+                          return const CircularProgressIndicator();
+                        }
+                      },
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      error: (error, stackTrace) {
+                        return Text('Error: $error');
+                      },
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
-  
+
   //Creating tiles for other expenses
   Widget _buildExpenseTile(
       BuildContext context, String attributeName, int value) {
@@ -151,7 +159,7 @@ class _ExpensesState extends ConsumerState<Expenses> {
           name,
           style: const TextStyle(
             fontFamily: 'OtomanopeeOne',
-            fontSize: 12.0,
+            fontSize: 11.0,
             color: Color(0xFF726662),
           ),
         ),
@@ -172,7 +180,7 @@ class _ExpensesState extends ConsumerState<Expenses> {
       ),
     );
   }
-  
+
   //The tile for output of 'Total' amount
   Widget _buildTotalTile(
       BuildContext context, String attributeName, int value) {
@@ -207,7 +215,7 @@ class _ExpensesState extends ConsumerState<Expenses> {
       ),
     );
   }
-  
+
   //The tile for output of 'Remaining' amount
   Widget _buildRemainingTile(BuildContext context, String attributeName,
       AsyncValue<int> remainingStream) {
